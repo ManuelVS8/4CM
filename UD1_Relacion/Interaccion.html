@@ -1,10 +1,10 @@
 <!DOCTYPE html>
-<!-- saved from url=(0155)file:///G:/Mi%20unidad/MANUEL%20SIUROT/JUEGOS%20HTML/C%20MEDIO/C%20MEDIO%204/UD1%20Funci%C3%B3n%20de%20relaci%C3%B3n/Funci%C3%B3n%20de%20relaci%C3%B3n.html -->
-<html lang="en" translate="no" class="notranslate"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<!-- saved from url=(0048)https://manuelvs8.github.io/Funcion-de-Relacion/ -->
+<html lang="es" translate="no" class="notranslate"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
     
     <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
     <meta name="google" content="notranslate">
-    <title>Interaction Function</title>
+    <title>Función de relación</title>
     <link rel="icon" type="image/x-icon" href="https://raw.githubusercontent.com/ManuelVS8/Audios-juegos-SCIENCE/refs/heads/main/icono.ico">
     <style>
         * { box-sizing: border-box; margin:0; padding:0; }
@@ -62,22 +62,33 @@
 
         /* Top controls */
         .top-controls { position:absolute; top:.8rem; right:1rem; display:flex; align-items:center; gap:8px; z-index:20; }
+        .lang-pill { display:flex; align-items:center; background:#fff; border-radius:999px; padding:3px; gap:3px;
+            box-shadow:0 2px 8px rgba(0,0,0,0.12); border:1px solid #e0e0e0; }
+        .lang-pill button { width:34px; height:34px; border-radius:50%; border:none; font-size:1.15rem; cursor:pointer;
+            display:flex; align-items:center; justify-content:center; background:transparent;
+            transition:background .2s, opacity .2s, transform .15s; }
+        .lang-pill button.active-lang { background:var(--blue-600); transform:scale(1.08); }
+        .lang-pill button:not(.active-lang) { opacity:.5; }
+        .lang-pill button:hover:not(.active-lang) { opacity:.8; transform:scale(1.05); }
+        body.rtl-active #startTitle, body.rtl-active #startSubtitle, body.rtl-active #startAdvice,
+        body.rtl-active #hofTitle, body.rtl-active #summaryTitle, body.rtl-active #theoryMainTitle, body.rtl-active #theoryIntro,
+        body.rtl-active #theoryLabel1, body.rtl-active #theoryP1, body.rtl-active #theoryLabel2, body.rtl-active #theoryP2,
+        body.rtl-active #theoryLabel3, body.rtl-active #theoryP3, body.rtl-active #theoryHowTitle,
+        body.rtl-active #theoryS1, body.rtl-active #theoryS2, body.rtl-active #theoryS3, body.rtl-active #theoryS4, body.rtl-active #theoryS5,
+        body.rtl-active #game1Title, body.rtl-active #game1Subtitle, body.rtl-active #game2Title, body.rtl-active #game2Subtitle,
+        body.rtl-active .text-paragraph, body.rtl-active .ordering-card,
+        body.rtl-active #finalTitle, body.rtl-active #scoreLabel, body.rtl-active #finalTimeLabel,
+        body.rtl-active #modalTitle, body.rtl-active #modalTimeLabel {
+            direction: rtl; text-align: right;
+        }
+        body.rtl-active .theory-list { padding-left:0; padding-right:1.2rem; }
+        body.rtl-active .theory-steps li { flex-direction:row-reverse; }
         .mute-btn { background:linear-gradient(135deg, var(--orange), var(--orange-700)); color:#fff; border:2px solid #fff;
             width:38px; height:38px; border-radius:50%; cursor:pointer; display:flex; align-items:center; justify-content:center;
             z-index:20; transition:transform .2s, box-shadow .2s; }
         .mute-btn:hover { transform:scale(1.1); box-shadow:0 4px 12px rgba(245,158,66,.4); }
         .mute-btn.muted { background:linear-gradient(135deg,#999,#777); }
         .mute-btn svg { width:20px; height:20px; pointer-events:none; }
-
-        /* Play audio button */
-        .play-audio-btn {
-            width:44px; height:44px; border-radius:50%; background:var(--blue-600); border:none; cursor:pointer;
-            display:flex; align-items:center; justify-content:center; transition:transform .15s, box-shadow .15s;
-            box-shadow:0 2px 8px rgba(37,79,186,.3); flex-shrink:0;
-        }
-        .play-audio-btn:hover { transform:scale(1.1); box-shadow:0 4px 14px rgba(37,79,186,.4); }
-        .play-audio-btn:active { transform:scale(.95); }
-        .play-audio-btn svg { width:18px; height:18px; fill:white; }
 
         /* Pantalla Inicio */
         .start-content { display:flex; flex-direction:column; justify-content:center; align-items:center; flex:1; gap:1rem; padding:1rem; }
@@ -98,6 +109,78 @@
         .theory-section:last-child { border-bottom:none; margin-bottom:0; padding-bottom:0; }
         .theory-list { padding-left:1.2rem; margin-top:6px; }
         .theory-list li { margin-bottom:6px; }
+        .theory-steps { padding-left:0; list-style:none; margin-top:8px; counter-reset:step-counter; }
+        .theory-steps li { counter-increment:step-counter; display:flex; gap:.7rem; align-items:flex-start; margin-bottom:10px;
+            background:#fff; border-radius:10px; padding:.7rem 1rem; box-shadow:0 2px 6px rgba(0,0,0,.06); }
+        .theory-steps li::before { content:counter(step-counter); background:var(--orange); color:#fff; border-radius:50%;
+            width:28px; height:28px; flex-shrink:0; display:flex; align-items:center; justify-content:center;
+            font-weight:900; font-size:1rem; }
+
+        /* Juego 1: Completar huecos */
+        .fill-game-container { display:flex; flex-direction:column; gap:1rem; padding:10px; }
+        .word-bank { display:flex; flex-wrap:wrap; gap:.5rem; justify-content:center; margin-bottom:1rem;
+            min-height:50px; padding:.5rem; background:#f0f7ff; border-radius:8px; border:1px dashed #cbd5e0; }
+        .draggable-word { background-color:var(--white); border:1px solid var(--blue-600); color:var(--blue-700);
+            padding:.4rem .8rem; border-radius:20px; cursor:grab; user-select:none; font-weight:600;
+            font-size:.9rem; box-shadow:0 2px 4px rgba(0,0,0,0.1); touch-action:none; transition:transform .1s, box-shadow .1s; }
+        .draggable-word:active { cursor:grabbing; transform:scale(1.05); }
+        .draggable-word.hidden { display:none; }
+        .draggable-word.selected { border-color:var(--orange); box-shadow:0 0 0 2px var(--orange); }
+        .draggable-word:hover { transform:scale(1.03); box-shadow:0 4px 8px rgba(0,0,0,.15); }
+
+        .text-area { font-size:1.05rem; line-height:2.4; color:#333; margin-bottom:1rem; }
+        .text-paragraph { margin-bottom:.85rem; }
+
+        .dropzone { display:inline-flex; align-items:center; justify-content:center; min-width:90px; height:34px;
+            border:2px dashed #a0aec0; background-color:#e6fffa; border-radius:6px; margin:0 4px;
+            vertical-align:middle; cursor:pointer; transition:background-color .2s, border-color .2s; }
+        .dropzone:hover { border-color:var(--orange); background-color:#fffaf0; }
+        .dropzone.filled { border-style:solid; border-color:var(--blue-600); background-color:var(--white); }
+        .dropzone.correct { border-color:var(--green); background-color:#d1fae5; color:var(--green); font-weight:bold; }
+        .dropzone.incorrect { border-color:var(--red); background-color:#fee2e2; color:var(--red); font-weight:bold; animation:shakeAnim .4s ease-in-out; }
+        .placed-word { width:100%; height:100%; display:flex; align-items:center; justify-content:center;
+            cursor:pointer; font-size:.9rem; color:var(--blue-700); font-weight:600; }
+
+        @keyframes shakeAnim {
+            0%,100%{transform:translateX(0);}
+            20%{transform:translateX(-5px);}
+            40%{transform:translateX(5px);}
+            60%{transform:translateX(-5px);}
+            80%{transform:translateX(5px);}
+        }
+
+        /* Juego 2: Ordenar frases */
+        .ordering-wrapper { display:flex; flex-direction:column; align-items:center; gap:.4rem; width:100%; max-width:700px; margin:0 auto; flex:1; justify-content:flex-start; padding-top:.2rem; }
+        .ordering-list { width:100%; display:flex; flex-direction:column; gap:10px; }
+        .ordering-item { position:relative; display:flex; align-items:stretch; }
+        .ordering-card { flex:1; background:#f8fff9; border:2px solid #b7e4c7; border-radius:10px; padding:.95rem 3.4rem .95rem .9rem;
+            text-align:center; font-weight:700; font-size:clamp(.88rem,2.3vw,1.02rem); color:var(--blue-dark);
+            transition:all .2s ease; cursor:default; min-height:72px; display:flex; align-items:center; justify-content:center; line-height:1.3; }
+        .ordering-card:hover { box-shadow:0 3px 8px rgba(0,0,0,0.08); background:#eef6ff; border-color:#90cdf4; }
+        .ordering-card.correct-highlight { color:var(--green) !important; border-color:var(--green) !important; background:#d4edda !important; }
+        .ordering-card.incorrect-highlight { color:var(--red) !important; border-color:var(--red) !important; background:#f8d7da !important; animation:shakeAnim .4s ease-in-out; }
+        .arrow-btns { position:absolute; right:0; top:0; bottom:0; width:46px; display:flex; flex-direction:column; gap:5px; padding:5px; box-sizing:border-box; }
+        .arrow-btn { flex:1; border:none; background:var(--orange); color:#fff; font-size:1rem; cursor:pointer;
+            display:flex; align-items:center; justify-content:center; transition:background .15s;
+            padding:0; line-height:1; min-height:28px; border-radius:6px; }
+        .arrow-btn:hover:not(:disabled) { background:var(--orange-700); }
+        .arrow-btn:active:not(:disabled) { filter:brightness(.85); }
+        .arrow-btn:disabled { background:#ccc; cursor:not-allowed; opacity:.5; }
+
+        /* Pantalla Final */
+        .results { display:flex; flex-direction:column; align-items:center; gap:.6rem; text-align:center; flex:1; justify-content:center; }
+        .final-title { color:var(--blue-dark); font-weight:900; }
+        .big-score { font-size:clamp(2.2rem,6vw,3.4rem); color:var(--blue-600); font-weight:900; }
+        .score-title { font-size:1.0rem; color:var(--blue-700); margin-top:1rem; }
+        .final-time { color:var(--blue-700); }
+        #trophyBox { display:none; font-size:clamp(4rem,10vw,7rem); margin:.5rem 0; text-align:center;
+            align-self:center; animation:bounce 1s ease infinite; color:var(--orange); line-height:1; }
+        @keyframes bounce { 0%,100%{transform:translateY(0) scale(1);} 50%{transform:translateY(-15px) scale(1.1);} }
+        .credit { color:var(--blue-700); margin-top:1rem; }
+        #finalMsg { font-size:clamp(1.2rem,4.2vw,1.8rem); font-weight:800; color:var(--blue-700); margin-top:.6rem; }
+        .school-logo { display:block; width:160px; max-width:28%; height:auto; margin-top:.8rem; border-radius:8px; object-fit:contain; }
+        @media (max-width:899px) { .school-logo { width:140px; max-width:160px; } }
+        @media (max-width:420px) { .school-logo { width:110px; max-width:40%; margin-top:.6rem; } }
 
         /* Hall of Fame */
         .hall-of-fame { background:var(--panel); border-radius:12px; padding:1rem; margin-top:1.5rem; width:100%; max-width:600px; }
@@ -120,145 +203,11 @@
         .confetti { position:fixed; width:10px; height:10px; border-radius:50%; animation:confetti-fall 3s linear forwards; z-index:999; }
         @keyframes confetti-fall { 0%{transform:translate(0,-20px) rotate(0);opacity:1;} 100%{transform:translate(var(--tx),var(--ty)) rotate(360deg);opacity:0;} }
 
-        /* Pantalla Final */
-        .results { display:flex; flex-direction:column; align-items:center; gap:.6rem; text-align:center; flex:1; justify-content:center; }
-        .final-title { color:var(--blue-dark); font-weight:900; }
-        .big-score { font-size:clamp(2.2rem,6vw,3.4rem); color:var(--blue-600); font-weight:900; }
-        .score-title { font-size:1.0rem; color:var(--blue-700); margin-top:1rem; }
-        .final-time { color:var(--blue-700); }
-        #trophyBox { display:none; font-size:clamp(4rem,10vw,7rem); margin:.5rem 0; text-align:center;
-            align-self:center; animation:bounce 1s ease infinite; color:var(--orange); line-height:1; }
-        @keyframes bounce { 0%,100%{transform:translateY(0) scale(1);} 50%{transform:translateY(-15px) scale(1.1);} }
-        .credit { color:var(--blue-700); margin-top:1rem; }
-        #finalMsg { font-size:clamp(1.2rem,4.2vw,1.8rem); font-weight:800; color:var(--blue-700); margin-top:.6rem; }
-        .school-logo { display:block; width:160px; max-width:28%; height:auto; margin-top:.8rem; border-radius:8px; object-fit:contain; }
-        @media (max-width:899px) { .school-logo { width:140px; max-width:160px; } }
-        @media (max-width:420px) { .school-logo { width:110px; max-width:40%; margin-top:.6rem; } }
-
+        .game-controls { display:flex; gap:10px; justify-content:center; margin-top:1rem; min-height:48px; }
         .hidden { display:none !important; }
+        .check-btn-wrapper { margin-top:.5rem; }
 
-        @keyframes shakeAnim {
-            0%,100%{transform:translateX(0);}
-            20%{transform:translateX(-6px);}
-            40%{transform:translateX(6px);}
-            60%{transform:translateX(-6px);}
-            80%{transform:translateX(6px);}
-        }
-
-        /* ===== GAME 1: IMAGE GRID ===== */
-        .img-grid-area { display:flex; flex-direction:column; align-items:center; gap:.7rem; flex:1; width:100%; }
-        .img-grid-header { display:flex; align-items:center; gap:.8rem; justify-content:center; flex-wrap:wrap; }
-        .current-word-label { font-size:clamp(1.1rem,3.5vw,1.5rem); font-weight:900; color:var(--blue-700);
-            background:var(--panel); padding:.4rem 1rem; border-radius:10px; }
-
-        .img-grid {
-            display:grid;
-            grid-template-columns: repeat(5, 1fr);
-            gap:8px;
-            width:100%;
-        }
-        @media (max-width:600px) {
-            .img-grid {
-                grid-template-columns: repeat(2, 1fr);
-            }
-        }
-
-        .img-cell {
-            position:relative;
-            width:100%;
-            aspect-ratio:4/3;
-            border-radius:10px;
-            cursor:pointer;
-            overflow:hidden;
-            border:3px solid transparent;
-            background:transparent;
-            box-shadow:0 3px 10px rgba(0,0,0,0.13);
-            transition:transform .12s ease, border-color .2s ease, box-shadow .2s ease;
-        }
-        .img-cell:hover { transform:scale(1.04); box-shadow:0 5px 16px rgba(0,0,0,.18); }
-        .img-cell img {
-            width:100%; height:100%;
-            object-fit:contain;
-            display:block;
-            pointer-events:none;
-        }
-        .img-cell.correct-cell {
-            border:5px solid var(--green);
-            box-shadow:0 0 0 3px rgba(46,204,113,.35), 0 5px 16px rgba(0,0,0,.18);
-        }
-        .img-cell.error-cell {
-            border:5px solid var(--red);
-            animation: shakeAnim .4s ease-in-out;
-        }
-
-        /* ===== GAME 2: CLASSIFY ===== */
-        .classify-area { display:flex; flex-direction:column; align-items:center; gap:.8rem; flex:1; width:100%; }
-        .classify-img-wrapper {
-            width:100%;
-            max-width:300px;
-            aspect-ratio:4/3;
-            border-radius:14px;
-            overflow:hidden;
-            box-shadow:0 6px 20px rgba(0,0,0,.15);
-            background:transparent;
-            flex-shrink:0;
-        }
-        .classify-img-wrapper img {
-            width:100%; height:100%;
-            object-fit:contain;
-            display:block;
-        }
-        .classify-word { font-size:clamp(1.1rem,3.5vw,1.5rem); font-weight:900; color:var(--blue-700); text-align:center; }
-        .classify-img-top { display:flex; flex-direction:column; align-items:center; gap:.5rem; width:100%; }
-
-        .classify-btns {
-            display:flex;
-            flex-direction:row;
-            gap:10px;
-            justify-content:center;
-            align-items:stretch;
-            width:100%;
-        }
-        .classify-btn {
-            flex:1;
-            min-width:0;
-            border:none;
-            border-radius:14px;
-            cursor:pointer;
-            font-weight:900;
-            font-size:clamp(.95rem,2.6vw,1.2rem);
-            color:var(--blue-700);
-            background:linear-gradient(135deg, #c7d9f7 0%, #b0c8f5 100%);
-            padding:.9rem .5rem;
-            transition:transform .1s ease, box-shadow .2s ease, background .2s ease, color .2s ease;
-            box-shadow:0 4px 12px rgba(37,79,186,.15);
-            display:flex;
-            flex-direction:column;
-            justify-content:center;
-            align-items:center;
-            text-align:center;
-            min-height:76px;
-            letter-spacing:.01em;
-            border:2px solid rgba(37,79,186,.18);
-        }
-        .classify-btn:hover { transform:translateY(-3px); box-shadow:0 8px 20px rgba(37,79,186,.22); background:linear-gradient(135deg, #b8cef5 0%, #9ab8f0 100%); color:var(--blue-dark); }
-        .classify-btn:active { transform:scale(.97); }
-        .classify-btn.correct-btn {
-            background:linear-gradient(135deg, #a8f0c8 0%, #7de0a8 100%) !important;
-            color:#1a6b3a !important;
-            border-color:var(--green) !important;
-            transform:scale(1.04);
-            box-shadow:0 6px 18px rgba(46,204,113,.3) !important;
-        }
-        .classify-btn.error-btn {
-            background:linear-gradient(135deg, #f9b8b8 0%, #f58e8e 100%) !important;
-            color:#7a1a1a !important;
-            border-color:var(--red) !important;
-            animation: shakeAnim .4s ease-in-out;
-            box-shadow:0 6px 18px rgba(231,76,60,.25) !important;
-        }
-
-        @media (max-width:420px) { .btn { min-width:90px; padding:.6rem .7rem; height:44px; } }
+        @media (max-width:420px) { .btn { min-width:110px; padding:.6rem .9rem; height:44px; } }
     </style>
 </head>
 <body>
@@ -266,7 +215,12 @@
 
     <!-- Top Controls -->
     <div class="top-controls">
-        <button class="mute-btn" id="muteBtn" title="Mute/Unmute" onclick="toggleSound()">
+        <div class="lang-pill">
+            <button id="btnLangEs" class="active-lang" title="Español" onclick="setLang('es')">🇪🇸</button>
+            <button id="btnLangEn" title="English" onclick="setLang('en')">🇬🇧</button>
+            <button id="btnLangAr" title="العربية" onclick="setLang('ar')">🇲🇦</button>
+        </div>
+        <button class="mute-btn" id="muteBtn" title="Silenciar/Activar sonido" onclick="toggleSound()">
             <svg id="muteSvg" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                 <polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"></polygon>
                 <path d="M15.54 8.46a5 5 0 0 1 0 7.07"></path>
@@ -276,30 +230,27 @@
     </div>
 
     <!-- ===== PANTALLA INICIO ===== -->
-    <section class="screen" id="startScreen">
+    <section class="screen active" id="startScreen">
         <header>
-            <h1>Interaction Function</h1>
-            <div class="subtitle">Classify the interaction elements</div>
+            <h1 id="startTitle">Función de relación</h1>
+            <div class="subtitle" id="startSubtitle">Descubre cómo se realiza la función de relación</div>
         </header>
         <div class="start-content">
-            <div class="advice-box">
-                Interaction function involves the <span class="highlight-keyword">senses</span>, the <span class="highlight-keyword">nervous system</span> and the <span class="highlight-keyword">locomotor system</span>.
-                <strong style="display:block;margin-top:.6rem;text-align:center;">Good luck!</strong>
-            </div>
-            <button class="btn btn-primary" id="playBtn">Play</button>
-            <img class="start-image" src="./Interaccion_files/Niños.png" alt="Children learning">
+            <div class="advice-box" id="startAdvice">En la función de relación intervienen los <span class="highlight-keyword">sentidos</span>, el <span class="highlight-keyword">sistema nervioso</span> y el <span class="highlight-keyword">aparato locomotor</span>.<br><strong style="display:block;margin-top:.5rem;text-align:center;">¡Ánimo!</strong></div>
+            <button class="btn btn-primary" id="playBtn">Comenzar</button>
+            <img class="start-image" src="https://raw.githubusercontent.com/ManuelVS8/Efectos_audio/refs/heads/main/Ni%C3%B1os.png" alt="Niños aprendiendo">
             <div class="hall-of-fame" id="hallOfFame">
-                <div class="hall-of-fame-title">🏆 Best scores 🏆</div>
+                <div class="hall-of-fame-title">🏆 <span id="hofTitle">Mejores puntuaciones</span> 🏆</div>
                 <table class="hall-of-fame-table">
                     <thead>
                         <tr>
-                            <th>Position</th>
-                            <th>Name</th>
-                            <th>Points</th>
-                            <th>Time</th>
+                            <th id="hofPos">Posición</th>
+                            <th id="hofName">Nombre</th>
+                            <th id="hofPoints">Puntos</th>
+                            <th id="hofTime">Tiempo</th>
                         </tr>
                     </thead>
-                    <tbody id="hofTableBody"><tr><td colspan="4" class="hall-of-fame-loading">Be the first to save your score!</td></tr></tbody>
+                    <tbody id="hofTableBody"></tbody>
                 </table>
             </div>
         </div>
@@ -308,106 +259,104 @@
     <!-- ===== PANTALLA RESUMEN ===== -->
     <section class="screen" id="summaryScreen">
         <header>
-            <h1>Interaction Function</h1>
+            <h1 id="summaryTitle">Función de relación</h1>
         </header>
         <div class="summary-wrapper">
             <div class="theory-box">
                 <div class="theory-section">
-                    <span class="theory-title">Interaction elements</span>
-                    <p>The interaction function involves:</p>
-                    <ul class="theory-list">
-                        <li>🟠 <span class="theory-highlight">Senses:</span> Sight, hearing, smell, taste, and touch.</li>
-                        <li>🧠 <span class="theory-highlight">Nervous system:</span> Brain, spinal cord, and nerves.</li>
-                        <li>🦴 <span class="theory-highlight">Locomotor system:</span> Muscles and skeleton.</li>
+                    <span class="theory-title" id="theoryMainTitle">Función de relación</span>
+                    <p id="theoryIntro">En la función de relación intervienen:</p>
+                    <ul class="theory-list" id="theoryPartsList">
+                        <li>🟠 <span class="theory-highlight" id="theoryLabel1">Los sentidos:</span> <span id="theoryP1">Vista, oído, olfato, gusto y tacto.</span></li>
+                        <li>🧠 <span class="theory-highlight" id="theoryLabel2">Sistema nervioso:</span> <span id="theoryP2">Cerebro, médula espinal y nervios.</span></li>
+                        <li>🦴 <span class="theory-highlight" id="theoryLabel3">Aparato locomotor:</span> <span id="theoryP3">Músculos y esqueleto.</span></li>
                     </ul>
+                </div>
+                <div class="theory-section">
+                    <span class="theory-title" id="theoryHowTitle">¿Cómo se realiza la función de relación?</span>
+                    <ol class="theory-steps" id="theorySteps">
+                        <li id="theoryS1">Recibimos información a través de los sentidos.</li>
+                        <li id="theoryS2">Los nervios sensitivos llevan la información desde los sentidos hasta el cerebro.</li>
+                        <li id="theoryS3">El cerebro procesa la información y decide una respuesta.</li>
+                        <li id="theoryS4">La respuesta viaja por los nervios motores hasta los músculos.</li>
+                        <li id="theoryS5">Los músculos realizan el movimiento.</li>
+                    </ol>
                 </div>
             </div>
         </div>
         <div style="text-align:center; margin-top:.8rem;">
-            <button class="btn btn-primary" id="startGameBtn">Play</button>
+            <button class="btn btn-primary" id="startGameBtn">Jugar</button>
         </div>
     </section>
 
-    <!-- ===== PANTALLA JUEGO 1: SELECT THE PICTURES ===== -->
+    <!-- ===== PANTALLA JUEGO 1: COMPLETAR HUECOS ===== -->
     <section class="screen" id="game1Screen">
         <header>
-            <h1>Select the organs of the interaction function</h1>
+            <h1 id="game1Title">Función de relación</h1>
+            <div class="subtitle" id="game1Subtitle">Rellena los huecos para completar el texto</div>
         </header>
         <div class="game-info">
-            <div class="timer" id="timerDisplay">03:12.6</div>
-            <div class="progress-bar"><div class="progress-fill" id="progressFill1" style="width: 100%;"></div></div>
-            <div class="level-indicator" id="g1LevelIndicator">10/10</div>
+            <div class="timer" id="timerDisplay">00:00.0</div>
+            <div class="progress-bar"><div class="progress-fill" id="progressFill1"></div></div>
         </div>
-        <div class="img-grid-area">
-            <div class="img-grid-header">
-                <button class="play-audio-btn" id="g1PlayAudioBtn" title="Repeat audio" onclick="g1PlayCurrentAudio()">
-                    <svg viewBox="0 0 24 24"><polygon points="5,3 19,12 5,21"></polygon></svg>
-                </button>
-                <div class="current-word-label" id="g1CurrentWord">Spinal cord</div>
+        <div class="fill-game-container">
+            <div class="word-bank" id="wordBank"></div>
+            <div class="text-area" id="textContainer"></div>
+            <div class="game-controls">
+                <button class="btn btn-primary" id="checkGame1Btn">Comprobar</button>
+                <button class="btn btn-blue hidden" id="continueGame1Btn">Continuar</button>
             </div>
-            <div class="img-grid" id="imgGrid"><div class="img-cell solved-cell" data-name="Muscles"><img src="./Interaccion_files/Muscles.png" alt="Muscles"></div><div class="img-cell solved-cell" data-name="Touch"><img src="./Interaccion_files/Touch.png" alt="Touch"></div><div class="img-cell solved-cell" data-name="Skeleton"><img src="./Interaccion_files/Skeleton.png" alt="Skeleton"></div><div class="img-cell solved-cell" data-name="Brain"><img src="./Interaccion_files/Brain.png" alt="Brain"></div><div class="img-cell solved-cell" data-name="Spinal cord"><img src="./Interaccion_files/Spinal.png" alt="Spinal cord"></div><div class="img-cell solved-cell" data-name="Taste"><img src="./Interaccion_files/Taste.png" alt="Taste"></div><div class="img-cell solved-cell" data-name="Sight"><img src="./Interaccion_files/Sight.png" alt="Sight"></div><div class="img-cell solved-cell" data-name="Smell"><img src="./Interaccion_files/Smell.png" alt="Smell"></div><div class="img-cell solved-cell" data-name="Nerves"><img src="./Interaccion_files/Nerves.png" alt="Nerves"></div><div class="img-cell solved-cell" data-name="Hearing"><img src="./Interaccion_files/Hearing.png" alt="Hearing"></div></div>
         </div>
     </section>
 
-    <!-- ===== PANTALLA JUEGO 2: CLASSIFY ===== -->
+    <!-- ===== PANTALLA JUEGO 2: ORDENAR FASES ===== -->
     <section class="screen" id="game2Screen">
         <header>
-            <h1>Classify the Interaction Elements</h1>
+            <h1 id="game2Title">Función de relación</h1>
+            <div class="subtitle" id="game2Subtitle">Ordena las fases</div>
         </header>
         <div class="game-info">
-            <div class="timer" id="timerDisplay2">03:12.6</div>
-            <div class="progress-bar"><div class="progress-fill" id="progressFill2" style="width: 100%;"></div></div>
-            <div class="level-indicator" id="g2LevelIndicator">10/10</div>
+            <div class="timer" id="timerDisplay2">00:00.0</div>
+            <div class="progress-bar"><div class="progress-fill" id="progressFill2"></div></div>
         </div>
-        <div class="classify-area">
-            <div class="classify-img-top">
-                <div class="classify-img-wrapper" id="classifyImgWrapper">
-                    <img id="classifyImg" src="./Interaccion_files/Smell.png" alt="Smell">
-                </div>
-                <div style="display:flex;align-items:center;gap:.6rem;">
-                    <button class="play-audio-btn" id="g2PlayAudioBtn" title="Repeat audio" onclick="g2PlayCurrentAudio()">
-                        <svg viewBox="0 0 24 24"><polygon points="5,3 19,12 5,21"></polygon></svg>
-                    </button>
-                    <div class="classify-word" id="g2CurrentWord">Smell</div>
-                </div>
-            </div>
-            <div class="classify-btns" id="classifyBtns">
-                <button class="classify-btn correct-btn" id="classifyBtnA" onclick="checkClassify(this)" data-group="Senses" disabled="">Senses</button>
-                <button class="classify-btn" id="classifyBtnB" onclick="checkClassify(this)" data-group="Nervous System" disabled="">Nervous System</button>
-                <button class="classify-btn" id="classifyBtnC" onclick="checkClassify(this)" data-group="Locomotor System" disabled="">Locomotor System</button>
+        <div class="ordering-wrapper">
+            <div class="ordering-list" id="orderingList"></div>
+            <div class="check-btn-wrapper">
+                <button class="btn btn-primary" id="checkGame2Btn">Comprobar</button>
+                <button class="btn btn-blue hidden" id="continueGame2Btn">Continuar</button>
             </div>
         </div>
     </section>
 
     <!-- ===== PANTALLA FINAL ===== -->
-    <section class="screen active" id="finalScreen">
+    <section class="screen" id="finalScreen">
         <header>
-            <h1 class="final-title">Interaction elements</h1>
+            <h1 class="final-title" id="finalTitle">Función de relación</h1>
         </header>
         <div class="results">
-            <div id="trophyBox" style="display: block;">🏆</div>
-            <div class="score-title">Score:</div>
-            <div class="big-score" id="finalScore">100</div>
-            <div class="final-time" id="finalTimeLabel">Time: <span id="finalTime">03:12.6</span></div>
-            <div id="finalMsg">Well done, full marks!</div>
-            <button class="btn btn-primary" id="backToMenuBtn" style="background:var(--orange);">Back to menu</button>
-            <span class="credit">Created by Manuel J. Ventura</span>
-            <img class="school-logo" src="./Interaccion_files/Siurot.png" alt="School logo">
+            <div id="trophyBox">🏆</div>
+            <div class="score-title" id="scoreLabel">Puntuación:</div>
+            <div class="big-score" id="finalScore">0</div>
+            <div class="final-time" id="finalTimeLabel">Tiempo: <span id="finalTime">00:00.0</span></div>
+            <div id="finalMsg"></div>
+            <button class="btn btn-primary" id="backToMenuBtn" style="background:var(--orange);">Volver al menú</button>
+            <span class="credit">Creado por Manuel J. Ventura</span>
+            <img class="school-logo" src="https://raw.githubusercontent.com/ManuelVS8/Efectos_audio/refs/heads/main/Siurot.png" alt="Logo del colegio">
         </div>
     </section>
 
 </div><!-- .game-container -->
 
 <!-- Modal HOF -->
-<div id="submitModal" class="modal-overlay" style="display: none;">
+<div id="submitModal" class="modal-overlay">
     <div class="modal-content">
-        <h3 id="modalTitle">Game Over!</h3>
-        <p id="modalTimeLabel">Your time: <span id="modalTime">03:12.6</span></p>
-        <input type="text" id="playerName" class="modal-input" placeholder="First name" maxlength="15">
-        <input type="text" id="playerSurname" class="modal-input" placeholder="Surname" maxlength="15">
+        <h3 id="modalTitle">¡Juego Terminado!</h3>
+        <p id="modalTimeLabel">Tu tiempo: <span id="modalTime">00:00.0</span></p>
+        <input type="text" id="playerName" class="modal-input" placeholder="Nombre" maxlength="15">
+        <input type="text" id="playerSurname" class="modal-input" placeholder="Apellido" maxlength="20">
         <div style="display:flex;gap:10px;justify-content:center;">
-            <button id="submitScoreBtn" class="btn btn-primary">Save</button>
-            <button id="discardScoreBtn" class="btn btn-ghost">Cancel</button>
+            <button id="submitScoreBtn" class="btn btn-primary">Guardar</button>
+            <button id="discardScoreBtn" class="btn btn-ghost">Cancelar</button>
         </div>
     </div>
 </div>
@@ -416,11 +365,10 @@
 /* ====================================================
    CONFIGURACIÓN GLOBAL
 ===================================================== */
-const SHEET_NAME = "Interaction";
+const SHEET_NAME = "Relacion";
 const APP_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbxV6Bs0TlqjtE8nY-df6NsUSZTxVCcKYv1DuLmwEbbuRDt3sNs84QEz9MLe4_Aigywuag/exec";
 
-const MIN_INTERACTIONS = 20; // 10 per game
-
+let currentLang = 'es';
 let isMuted = false;
 let audioUnlocked = false;
 let startTime = 0;
@@ -429,36 +377,167 @@ let elapsed = 0;
 let timerStopped = false;
 let finalScoreVal = 0;
 let finalTimeVal = 0;
-let totalAttempts = 0;
+let scoreData = { g1Correct: 0, g2Correct: 0 };
 let isHofLoading = false;
-let selectedVoice = null;
-let gameOrder = []; // shuffled: ['game1','game2'] or ['game2','game1']
-let currentGameIndex = 0;
 
 /* ====================================================
-   DATA
+   i18n DATA
 ===================================================== */
-const ALL_ITEMS = [
-    { name:'Sight',      group:'Senses',          img:'https://raw.githubusercontent.com/ManuelVS8/Audios-juegos-SCIENCE/refs/heads/main/C_MEDIO4/Relacion/Sight.png' },
-    { name:'Hearing',    group:'Senses',          img:'https://raw.githubusercontent.com/ManuelVS8/Audios-juegos-SCIENCE/refs/heads/main/C_MEDIO4/Relacion/Hearing.png' },
-    { name:'Smell',      group:'Senses',          img:'https://raw.githubusercontent.com/ManuelVS8/Audios-juegos-SCIENCE/refs/heads/main/C_MEDIO4/Relacion/Smell.png' },
-    { name:'Taste',      group:'Senses',          img:'https://raw.githubusercontent.com/ManuelVS8/Audios-juegos-SCIENCE/refs/heads/main/C_MEDIO4/Relacion/Taste.png' },
-    { name:'Touch',      group:'Senses',          img:'https://raw.githubusercontent.com/ManuelVS8/Audios-juegos-SCIENCE/refs/heads/main/C_MEDIO4/Relacion/Touch.png' },
-    { name:'Brain',      group:'Nervous System',  img:'https://raw.githubusercontent.com/ManuelVS8/Audios-juegos-SCIENCE/refs/heads/main/C_MEDIO4/Relacion/Brain.png' },
-    { name:'Spinal cord',group:'Nervous System',  img:'https://raw.githubusercontent.com/ManuelVS8/Audios-juegos-SCIENCE/refs/heads/main/C_MEDIO4/Relacion/Spinal.png' },
-    { name:'Nerves',     group:'Nervous System',  img:'https://raw.githubusercontent.com/ManuelVS8/Audios-juegos-SCIENCE/refs/heads/main/C_MEDIO4/Relacion/Nerves.png' },
-    { name:'Muscles',    group:'Locomotor System', img:'https://raw.githubusercontent.com/ManuelVS8/Audios-juegos-SCIENCE/refs/heads/main/C_MEDIO4/Relacion/Muscles.png' },
-    { name:'Skeleton',   group:'Locomotor System', img:'https://raw.githubusercontent.com/ManuelVS8/Audios-juegos-SCIENCE/refs/heads/main/C_MEDIO4/Relacion/Skeleton.png' },
-];
+const i18n = {
+    es: {
+        startTitle: 'Función de relación',
+        startSubtitle: 'Descubre cómo se realiza la función de relación',
+        startAdvice: 'En la función de relación intervienen los <span class="highlight-keyword">sentidos</span>, el <span class="highlight-keyword">sistema nervioso</span> y el <span class="highlight-keyword">aparato locomotor</span>.<br><strong style="display:block;margin-top:.5rem;text-align:center;">¡Ánimo!</strong>',
+        startBtn: 'Comenzar',
+        playBtn: 'Jugar',
+        hofTitle: 'Mejores puntuaciones',
+        hofPos: 'Posición', hofName: 'Nombre', hofPoints: 'Puntos', hofTime: 'Tiempo',
+        summaryTitle: 'Función de relación',
+        theoryMainTitle: 'Función de relación',
+        theoryIntro: 'En la función de relación intervienen:',
+        theoryLabel1: 'Los sentidos:',
+        theoryP1: 'Vista, oído, olfato, gusto y tacto.',
+        theoryLabel2: 'Sistema nervioso:',
+        theoryP2: 'Cerebro, médula espinal y nervios.',
+        theoryLabel3: 'Aparato locomotor:',
+        theoryP3: 'Músculos y esqueleto.',
+        theoryHowTitle: '¿Cómo se realiza la función de relación?',
+        theoryS1: 'Recibimos información a través de los sentidos.',
+        theoryS2: 'Los nervios sensitivos llevan la información desde los sentidos hasta el cerebro.',
+        theoryS3: 'El cerebro procesa la información y decide una respuesta.',
+        theoryS4: 'La respuesta viaja por los nervios motores hasta los músculos.',
+        theoryS5: 'Los músculos realizan el movimiento.',
+        game1Title: 'Función de relación',
+        game1Subtitle: 'Rellena los huecos para completar el texto',
+        checkBtn: 'Comprobar',
+        continueBtn: 'Continuar',
+        game2Title: 'Función de relación',
+        game2Subtitle: 'Ordena las fases',
+        finalTitle: 'Función de relación',
+        scoreLabel: 'Puntuación:',
+        timeLabel: 'Tiempo:',
+        backBtn: 'Volver al menú',
+        modalTitle: '¡Juego Terminado!',
+        modalTimeLabel: 'Tu tiempo:',
+        modalSave: 'Guardar',
+        modalCancel: 'Cancelar',
+        msgPerfect: '¡Enhorabuena, puntuación máxima!',
+        msgGood: '¡Buen trabajo! Sigue practicando',
+        msgBad: 'Así no es el cambio. Primero estudia la información',
+        phases: [
+            'Recibimos información a través de los sentidos.',
+            'Los nervios sensitivos llevan la información desde los sentidos hasta el cerebro.',
+            'El cerebro procesa la información y decide una respuesta.',
+            'La respuesta viaja por los nervios motores hasta los músculos.',
+            'Los músculos realizan el movimiento.'
+        ]
+    },
+    en: {
+        startTitle: 'Interaction Function',
+        startSubtitle: 'Discover how the interaction function works',
+        startAdvice: 'The interaction function involves the <span class="highlight-keyword">senses</span>, the <span class="highlight-keyword">nervous system</span> and the <span class="highlight-keyword">locomotor system</span>.<br><strong style="display:block;margin-top:.5rem;text-align:center;">Good luck!</strong>',
+        startBtn: 'Start',
+        playBtn: 'Play',
+        hofTitle: 'High Scores',
+        hofPos: 'Position', hofName: 'Name', hofPoints: 'Points', hofTime: 'Time',
+        summaryTitle: 'Interaction Function',
+        theoryMainTitle: 'Interaction Function',
+        theoryIntro: 'The interaction function involves:',
+        theoryLabel1: 'Senses:',
+        theoryP1: 'Sight, hearing, smell, taste, and touch.',
+        theoryLabel2: 'Nervous system:',
+        theoryP2: 'Brain, spinal cord, and nerves.',
+        theoryLabel3: 'Locomotor system:',
+        theoryP3: 'Muscles and skeleton.',
+        theoryHowTitle: 'How does the interaction function work?',
+        theoryS1: 'We receive information through the senses.',
+        theoryS2: 'Sensory nerves pass the information from the senses to the brain.',
+        theoryS3: 'The brain processes the information and decides a response.',
+        theoryS4: 'The response goes through the motor nerves to the muscles.',
+        theoryS5: 'Muscles make the movements.',
+        game1Title: 'Interaction Function',
+        game1Subtitle: 'Fill in the blanks to complete the text',
+        checkBtn: 'Check',
+        continueBtn: 'Continue',
+        game2Title: 'Interaction Function',
+        game2Subtitle: 'Order the stages',
+        finalTitle: 'Interaction Function',
+        scoreLabel: 'Score:',
+        timeLabel: 'Time:',
+        backBtn: 'Back to menu',
+        modalTitle: 'Game Over!',
+        modalTimeLabel: 'Your time:',
+        modalSave: 'Save',
+        modalCancel: 'Cancel',
+        msgPerfect: 'Congratulations, maximum score!',
+        msgGood: 'Good job! Keep practising',
+        msgBad: 'That\'s not right. Study the information first',
+        phases: [
+            'We receive information through the senses.',
+            'Sensory nerves pass the information from the senses to the brain.',
+            'The brain processes the information and decides a response.',
+            'The response goes through the motor nerves to the muscles.',
+            'Muscles make the movements.'
+        ]
+    }
+};
+i18n.ar = {
+    startTitle: 'وظيفة التفاعل',
+    startSubtitle: 'اكتشف كيف تتم وظيفة التفاعل',
+    startAdvice: 'تشمل وظيفة التفاعل <span class="highlight-keyword">الحواس</span>، <span class="highlight-keyword">الجهاز العصبي</span> و<span class="highlight-keyword">الجهاز الحركي</span>.<br><strong style="display:block;margin-top:.5rem;text-align:center;">بالتوفيق!</strong>',
+    startBtn: 'ابدأ',
+    playBtn: 'العب',
+    hofTitle: 'أفضل النتائج',
+    hofPos: 'الترتيب', hofName: 'الاسم', hofPoints: 'النقاط', hofTime: 'الوقت',
+    summaryTitle: 'وظيفة التفاعل',
+    theoryMainTitle: 'وظيفة التفاعل',
+    theoryIntro: 'تشمل وظيفة التفاعل:',
+    theoryLabel1: 'الحواس:',
+    theoryP1: 'البصر والسمع والشم والتذوق واللمس.',
+    theoryLabel2: 'الجهاز العصبي:',
+    theoryP2: 'الدماغ والنخاع الشوكي والأعصاب.',
+    theoryLabel3: 'الجهاز الحركي:',
+    theoryP3: 'العضلات والهيكل العظمي.',
+    theoryHowTitle: 'كيف تتم وظيفة التفاعل؟',
+    theoryS1: 'نستقبل المعلومة عن طريق الحواس.',
+    theoryS2: 'تنقل الأعصاب الحسية المعلومة من الحواس إلى الدماغ.',
+    theoryS3: 'يعالج الدماغ المعلومة ويقرر استجابة مناسبة.',
+    theoryS4: 'تنتقل الاستجابة عبر الأعصاب الحركية إلى العضلات.',
+    theoryS5: 'تقوم العضلات بتنفيذ الحركة.',
+    game1Title: 'وظيفة التفاعل',
+    game1Subtitle: 'املأ الفراغات لإكمال النص',
+    checkBtn: 'تحقق',
+    continueBtn: 'متابعة',
+    game2Title: 'وظيفة التفاعل',
+    game2Subtitle: 'رتب المراحل',
+    finalTitle: 'وظيفة التفاعل',
+    scoreLabel: 'النتيجة:',
+    timeLabel: 'الوقت:',
+    backBtn: 'العودة إلى القائمة',
+    modalTitle: 'انتهت اللعبة!',
+    modalTimeLabel: 'وقتك:',
+    modalSave: 'حفظ',
+    modalCancel: 'إلغاء',
+    msgPerfect: 'رائع! نتيجة كاملة!',
+    msgGood: 'أحسنت! واصل التدريب',
+    msgBad: 'هذا ليس صحيحًا. راجع المعلومات أولاً',
+    phases: [
+        'نستقبل المعلومة عن طريق الحواس.',
+        'تنقل الأعصاب الحسية المعلومة من الحواس إلى الدماغ.',
+        'يعالج الدماغ المعلومة ويقرر استجابة مناسبة.',
+        'تنتقل الاستجابة عبر الأعصاب الحركية إلى العضلات.',
+        'تقوم العضلات بتنفيذ الحركة.'
+    ]
+};
 
 /* ====================================================
-   AUDIO EFFECTS
+   AUDIO
 ===================================================== */
 const audioUrls = {
-    correct:   'https://raw.githubusercontent.com/ManuelVS8/Efectos_audio/refs/heads/main/Correcto.mp3',
-    error:     'https://raw.githubusercontent.com/ManuelVS8/Efectos_audio/refs/heads/main/Error.mp3',
-    tap:       'https://raw.githubusercontent.com/ManuelVS8/Efectos_audio/refs/heads/main/Tap.mp3',
-    victory:   'https://raw.githubusercontent.com/ManuelVS8/Efectos_audio/refs/heads/main/Termin%C3%A9.mp3',
+    correct: 'https://raw.githubusercontent.com/ManuelVS8/Efectos_audio/refs/heads/main/Correcto.mp3',
+    error: 'https://raw.githubusercontent.com/ManuelVS8/Efectos_audio/refs/heads/main/Error.mp3',
+    tap: 'https://raw.githubusercontent.com/ManuelVS8/Efectos_audio/refs/heads/main/Tap.mp3',
+    victory: 'https://raw.githubusercontent.com/ManuelVS8/Efectos_audio/refs/heads/main/Termin%C3%A9.mp3',
     completed: 'https://raw.githubusercontent.com/ManuelVS8/Efectos_audio/refs/heads/main/Completado.mp3'
 };
 const audioObjects = {};
@@ -469,70 +548,20 @@ Object.keys(audioUrls).forEach(k => {
     audioObjects[k] = a;
 });
 
-// Preload images
-function preloadImages() {
-    ALL_ITEMS.forEach(item => {
-        const img = new Image();
-        img.src = item.img;
-    });
-}
-
-function unlockAudioContext() {
+function unlockAudio() {
     if (audioUnlocked) return;
     try {
         const ctx = new (window.AudioContext || window.webkitAudioContext)();
-        if (ctx.state === 'suspended') ctx.resume();
-        const buf = ctx.createBuffer(1, 1, 22050);
-        const src = ctx.createBufferSource();
-        src.buffer = buf;
-        src.connect(ctx.destination);
-        src.start(0);
+        const osc = ctx.createOscillator();
+        const g = ctx.createGain();
+        osc.connect(g); g.connect(ctx.destination); g.gain.value = 0.001;
+        osc.start(); osc.stop(ctx.currentTime + 0.01);
         audioUnlocked = true;
     } catch(e) { audioUnlocked = true; }
 }
-
-function forceInitTTS() {
-    if (window.speechSynthesis && speechSynthesis.getVoices().length === 0) {
-        try {
-            const u = new SpeechSynthesisUtterance('');
-            speechSynthesis.speak(u);
-        } catch(e) {}
-    }
-    loadVoice();
-}
-
-function loadVoice() {
-    function pick() {
-        const voices = speechSynthesis.getVoices();
-        if (!voices.length) return;
-        let v = voices.find(x => x.name === 'Google UK English Female' || x.name === 'Google UK English Male');
-        if (!v) v = voices.find(x => x.lang === 'en-GB' && (x.name.includes('Microsoft') || x.name.includes('Natural')));
-        if (!v) v = voices.find(x => x.lang.startsWith('en-GB'));
-        if (!v) v = voices.find(x => x.lang.startsWith('en'));
-        if (!v && voices.length) v = voices[0];
-        selectedVoice = v || null;
-    }
-    if (speechSynthesis.getVoices().length > 0) {
-        pick();
-    } else {
-        speechSynthesis.onvoiceschanged = pick;
-    }
-}
-
-function speakText(text) {
-    if (!window.speechSynthesis) return;
-    window.speechSynthesis.cancel();
-    if (!text) return;
-    const u = new SpeechSynthesisUtterance(text);
-    u.lang = 'en-GB';
-    if (selectedVoice) u.voice = selectedVoice;
-    u.rate = 0.95;
-    speechSynthesis.speak(u);
-}
-
 function playSound(key) {
     if (isMuted) return;
-    if (!audioUnlocked) unlockAudioContext();
+    if (!audioUnlocked) unlockAudio();
     const a = audioObjects[key];
     if (!a) return;
     try { a.currentTime = 0; a.play(); } catch(e) {}
@@ -562,7 +591,83 @@ function toggleSound() {
 }
 
 /* ====================================================
-   SCREENS
+   IDIOMA
+===================================================== */
+function setLang(lang) {
+    currentLang = lang;
+    document.documentElement.lang = lang;
+    document.getElementById('btnLangEs').classList.toggle('active-lang', lang === 'es');
+    document.getElementById('btnLangEn').classList.toggle('active-lang', lang === 'en');
+    document.getElementById('btnLangAr').classList.toggle('active-lang', lang === 'ar');
+    document.body.classList.toggle('rtl-active', lang === 'ar');
+
+    const t = i18n[lang];
+
+    // Pantalla inicio
+    document.getElementById('startTitle').textContent = t.startTitle;
+    document.getElementById('startSubtitle').textContent = t.startSubtitle;
+    document.getElementById('startAdvice').innerHTML = t.startAdvice;
+    document.getElementById('playBtn').textContent = t.startBtn;
+    document.getElementById('hofTitle').textContent = t.hofTitle;
+    document.getElementById('hofPos').textContent = t.hofPos;
+    document.getElementById('hofName').textContent = t.hofName;
+    document.getElementById('hofPoints').textContent = t.hofPoints;
+    document.getElementById('hofTime').textContent = t.hofTime;
+
+    // Pantalla resumen
+    document.getElementById('summaryTitle').textContent = t.summaryTitle;
+    document.getElementById('theoryMainTitle').textContent = t.theoryMainTitle;
+    document.getElementById('theoryIntro').textContent = t.theoryIntro;
+    document.getElementById('theoryLabel1').textContent = t.theoryLabel1;
+    document.getElementById('theoryP1').textContent = t.theoryP1;
+    document.getElementById('theoryLabel2').textContent = t.theoryLabel2;
+    document.getElementById('theoryP2').textContent = t.theoryP2;
+    document.getElementById('theoryLabel3').textContent = t.theoryLabel3;
+    document.getElementById('theoryP3').textContent = t.theoryP3;
+    document.getElementById('theoryHowTitle').textContent = t.theoryHowTitle;
+    document.getElementById('theoryS1').textContent = t.theoryS1;
+    document.getElementById('theoryS2').textContent = t.theoryS2;
+    document.getElementById('theoryS3').textContent = t.theoryS3;
+    document.getElementById('theoryS4').textContent = t.theoryS4;
+    document.getElementById('theoryS5').textContent = t.theoryS5;
+    document.getElementById('startGameBtn').textContent = t.playBtn;
+
+    // Pantalla juego 1
+    document.getElementById('game1Title').textContent = t.game1Title;
+    document.getElementById('game1Subtitle').textContent = t.game1Subtitle;
+    document.getElementById('checkGame1Btn').textContent = t.checkBtn;
+    document.getElementById('continueGame1Btn').textContent = t.continueBtn;
+
+    // Pantalla juego 2
+    document.getElementById('game2Title').textContent = t.game2Title;
+    document.getElementById('game2Subtitle').textContent = t.game2Subtitle;
+    document.getElementById('checkGame2Btn').textContent = t.checkBtn;
+    document.getElementById('continueGame2Btn').textContent = t.continueBtn;
+
+    // Pantalla final
+    document.getElementById('finalTitle').textContent = t.finalTitle;
+    document.getElementById('scoreLabel').textContent = t.scoreLabel;
+    document.getElementById('finalTimeLabel').innerHTML = t.timeLabel + ' <span id="finalTime">' + (document.getElementById('finalTime') ? document.getElementById('finalTime').textContent : '00:00.0') + '</span>';
+    document.getElementById('backToMenuBtn').textContent = t.backBtn;
+
+    // Modal
+    document.getElementById('modalTitle').textContent = t.modalTitle;
+    document.getElementById('modalTimeLabel').innerHTML = t.modalTimeLabel + ' <span id="modalTime">' + (document.getElementById('modalTime') ? document.getElementById('modalTime').textContent : '00:00.0') + '</span>';
+    document.getElementById('submitScoreBtn').textContent = t.modalSave;
+    document.getElementById('discardScoreBtn').textContent = t.modalCancel;
+
+    // Update ordering cards if game2 is active
+    const orderItems = document.querySelectorAll('.ordering-card');
+    orderItems.forEach(card => {
+        const idx = parseInt(card.dataset.origIndex);
+        if (!isNaN(idx)) {
+            card.textContent = t.phases[idx];
+        }
+    });
+}
+
+/* ====================================================
+   PANTALLAS
 ===================================================== */
 function showScreen(id) {
     document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
@@ -570,7 +675,7 @@ function showScreen(id) {
 }
 
 /* ====================================================
-   TIMER
+   TEMPORIZADOR
 ===================================================== */
 function startGlobalTimer() {
     if (timerInterval) return;
@@ -582,7 +687,8 @@ function startGlobalTimer() {
         timerStopped = false;
     }
     timerInterval = setInterval(() => {
-        elapsed = (Date.now() - startTime) / 1000;
+        const delta = (Date.now() - startTime) / 1000;
+        elapsed = delta;
         updateTimerDisplay(elapsed);
     }, 100);
 }
@@ -596,19 +702,19 @@ function stopTimer() {
 }
 
 function updateTimerDisplay(sec) {
-    const m = Math.floor(sec / 60).toString().padStart(2,'0');
-    const s = Math.floor(sec % 60).toString().padStart(2,'0');
+    const m = Math.floor(sec / 60).toString().padStart(2, '0');
+    const s = Math.floor(sec % 60).toString().padStart(2, '0');
     const ms = Math.round((sec % 1) * 10);
-    const str = `${m}:${s}.${ms}`;
-    ['timerDisplay','timerDisplay2'].forEach(id => {
+    const timeStr = `${m}:${s}.${ms}`;
+    ['timerDisplay', 'timerDisplay2'].forEach(id => {
         const el = document.getElementById(id);
-        if (el) el.textContent = str;
+        if (el) el.textContent = timeStr;
     });
 }
 
 function formatTime(sec) {
-    const m = Math.floor(sec / 60).toString().padStart(2,'0');
-    const s = Math.floor(sec % 60).toString().padStart(2,'0');
+    const m = Math.floor(sec / 60).toString().padStart(2, '0');
+    const s = Math.floor(sec % 60).toString().padStart(2, '0');
     const ms = Math.round((sec % 1) * 10);
     return `${m}:${s}.${ms}`;
 }
@@ -619,233 +725,429 @@ function updateProgress(id, pct) {
 }
 
 /* ====================================================
-   GAME 1: SELECT THE PICTURES
+   JUEGO 1: COMPLETAR HUECOS
 ===================================================== */
-let g1GridItems = [];  // shuffled order of images shown in the grid (fixed for the whole game)
-let g1WordQueue = [];  // independently shuffled queue of words to ask
-let g1QueueIndex = 0;  // current position in the word queue
-let g1CorrectSelected = []; // names already correctly selected
+
+// Texto base con placeholders {palabra}
+// Se definen en ambos idiomas. El índice canónico de cada hueco es fijo.
+// Para ES usamos palabras en español; para EN en inglés.
+// Las palabras posibles para ocultar (pool):
+// ES: relación, recibimos, información, sentidos, nervios, sensitivos, cerebro, procesa, decide, respuesta, viaja, motores, músculos, movimiento
+// EN: interaction, receive, information, senses, nerves, sensory, brain, processes, decides, response, travels, motor, muscles, movements
+
+const g1TextES = [
+    { text: "1. {Recibimos} información a través de los {sentidos}.", blanks: ["Recibimos", "sentidos"] },
+    { text: "2. Los {nervios} {sensitivos} llevan la información desde los sentidos hasta el {cerebro}.", blanks: ["nervios", "sensitivos", "cerebro"] },
+    { text: "3. El cerebro {procesa} la información y {decide} una {respuesta}.", blanks: ["procesa", "decide", "respuesta"] },
+    { text: "4. La respuesta {viaja} por los nervios {motores} hasta los {músculos}.", blanks: ["viaja", "motores", "músculos"] },
+    { text: "5. Los músculos realizan el {movimiento}.", blanks: ["movimiento"] }
+];
+
+const g1TextEN = [
+    { text: "1. We {receive} information through the {senses}.", blanks: ["receive", "senses"] },
+    { text: "2. {Sensory} {nerves} pass the information from the senses to the {brain}.", blanks: ["Sensory", "nerves", "brain"] },
+    { text: "3. The brain {processes} the information and {decides} a {response}.", blanks: ["processes", "decides", "response"] },
+    { text: "4. The {response} goes through the {motor} nerves to the {muscles}.", blanks: ["response", "motor", "muscles"] },
+    { text: "5. Muscles make the {movements}.", blanks: ["movements"] }
+];
+
+const g1TextAR = [
+    { text: "1. {نستقبل} المعلومة عن طريق {الحواس}.", blanks: ["نستقبل", "الحواس"] },
+    { text: "2. تنقل {الأعصاب} {الحسية} المعلومة من الحواس إلى {الدماغ}.", blanks: ["الأعصاب", "الحسية", "الدماغ"] },
+    { text: "3. {يعالج} الدماغ المعلومة و{يقرر} {استجابة} مناسبة.", blanks: ["يعالج", "يقرر", "استجابة"] },
+    { text: "4. {تنتقل} الاستجابة عبر الأعصاب {الحركية} إلى {العضلات}.", blanks: ["تنتقل", "الحركية", "العضلات"] },
+    { text: "5. تقوم العضلات بـ{تنفيذ} {الحركة}.", blanks: ["تنفيذ", "الحركة"] }
+];
+
+// Pool total de palabras para cada idioma
+const g1PoolES = ["relación", "Recibimos", "información", "sentidos", "nervios", "sensitivos", "cerebro", "procesa", "decide", "respuesta", "viaja", "motores", "músculos", "movimiento"];
+const g1PoolEN = ["interaction", "receive", "information", "senses", "nerves", "Sensory", "brain", "processes", "decides", "response", "travels", "motor", "muscles", "movements"];
+const g1PoolAR = ["التفاعل", "نستقبل", "الحواس", "الأعصاب", "الحسية", "الدماغ", "يعالج", "يقرر", "استجابة", "تنتقل", "الحركية", "العضلات", "تنفيذ", "الحركة"];
+
+let g1ChosenBlanks = []; // [{paraIdx, blankWord}] — qué blancos se ocultarán esta partida
+let selectedWordBankItem = null;
+let g1Checked = false;
 
 function initGame1() {
-    window.speechSynthesis && window.speechSynthesis.cancel();
-    // Grid images: one fixed shuffle for the visual layout
-    g1GridItems = shuffle([...ALL_ITEMS]);
-    // Word queue: independent shuffle — the order of words asked is NOT the grid order
-    g1WordQueue = shuffle([...ALL_ITEMS]);
-    g1QueueIndex = 0;
-    g1CorrectSelected = [];
-    updateProgress('progressFill1', 0);
-    renderG1Grid();
-    showG1CurrentWord();
-}
+    selectedWordBankItem = null;
+    g1Checked = false;
+    scoreData.g1Correct = 0;
 
-function renderG1Grid() {
-    const grid = document.getElementById('imgGrid');
-    grid.innerHTML = '';
-    g1GridItems.forEach(item => {
-        const cell = document.createElement('div');
-        cell.className = 'img-cell';
-        cell.dataset.name = item.name;
-        const img = document.createElement('img');
-        img.src = item.img;
-        img.alt = item.name;
-        cell.appendChild(img);
-        cell.addEventListener('click', () => handleG1Click(cell, item));
-        grid.appendChild(cell);
+    const bank = document.getElementById('wordBank');
+    const container = document.getElementById('textContainer');
+    const checkBtn = document.getElementById('checkGame1Btn');
+    const contBtn = document.getElementById('continueGame1Btn');
+
+    bank.innerHTML = '';
+    container.innerHTML = '';
+    checkBtn.classList.remove('hidden');
+    contBtn.classList.add('hidden');
+
+    const textData = currentLang === 'es' ? g1TextES : (currentLang === 'ar' ? g1TextAR : g1TextEN);
+    const pool = currentLang === 'es' ? g1PoolES : (currentLang === 'ar' ? g1PoolAR : g1PoolEN);
+
+    // Construir lista de todos los blanks disponibles (paraIdx, blankWord, posInPara)
+    let allPossibleBlanks = [];
+    textData.forEach((para, pIdx) => {
+        para.blanks.forEach((bw, posInPara) => {
+            allPossibleBlanks.push({ pIdx, bw, posInPara });
+        });
     });
-}
 
-function showG1CurrentWord() {
-    // Skip any word already correctly selected (shouldn't happen with queue, but safety check)
-    while (g1QueueIndex < g1WordQueue.length && g1CorrectSelected.includes(g1WordQueue[g1QueueIndex].name)) {
-        g1QueueIndex++;
+    // Barajar
+    allPossibleBlanks = allPossibleBlanks.sort(() => Math.random() - 0.5);
+
+    // Seleccionar exactamente 10 blanks:
+    // 1) No repetir la misma palabra (case-insensitive)
+    // 2) Primera pasada: evitar adyacentes dentro del mismo parrafo
+    // 3) Segunda pasada: si no llegamos a 10, rellenar permitiendo adyacentes
+    const usedWords = new Set();
+    const chosenPosByPara = {};
+    g1ChosenBlanks = [];
+
+    // Primera pasada: sin adyacentes
+    for (const item of allPossibleBlanks) {
+        if (g1ChosenBlanks.length === 10) break;
+        const wordLower = item.bw.toLowerCase();
+        if (usedWords.has(wordLower)) continue;
+        const chosenInPara = chosenPosByPara[item.pIdx] || [];
+        const hasAdjacentNeighbor = chosenInPara.some(pos => Math.abs(pos - item.posInPara) === 1);
+        if (hasAdjacentNeighbor) continue;
+        usedWords.add(wordLower);
+        if (!chosenPosByPara[item.pIdx]) chosenPosByPara[item.pIdx] = [];
+        chosenPosByPara[item.pIdx].push(item.posInPara);
+        g1ChosenBlanks.push(item);
     }
-    if (g1QueueIndex >= g1WordQueue.length) return;
 
-    const item = g1WordQueue[g1QueueIndex];
-    document.getElementById('g1CurrentWord').textContent = item.name;
-    document.getElementById('g1LevelIndicator').textContent = `${g1CorrectSelected.length + 1}/10`;
-    speakText(item.name);
+    // Segunda pasada: rellenar hasta 10 permitiendo adyacentes
+    if (g1ChosenBlanks.length < 10) {
+        for (const item of allPossibleBlanks) {
+            if (g1ChosenBlanks.length === 10) break;
+            const wordLower = item.bw.toLowerCase();
+            if (usedWords.has(wordLower)) continue;
+            usedWords.add(wordLower);
+            g1ChosenBlanks.push(item);
+        }
+    }
+
+    // Construir el HTML del texto con los huecos correctos
+    let html = '';
+    textData.forEach((para, pIdx) => {
+        let paraHtml = para.text;
+        // Reemplazar los blancos elegidos con dropzones
+        para.blanks.forEach(bw => {
+            const isChosen = g1ChosenBlanks.some(cb => cb.pIdx === pIdx && cb.bw === bw);
+            if (isChosen) {
+                const dzId = `dz_${pIdx}_${bw.replace(/[^a-zA-ZÀ-ú\u0600-\u06FF]/g, '_')}`;
+                const placeholder = `{${bw}}`;
+                const minW = Math.max(80, bw.length * 10 + 20);
+                paraHtml = paraHtml.replace(placeholder,
+                    `<span class="dropzone" id="${dzId}" data-answer="${bw}" style="min-width:${minW}px;"></span>`
+                );
+            } else {
+                paraHtml = paraHtml.replace(`{${bw}}`, bw);
+            }
+        });
+        html += `<p class="text-paragraph">${paraHtml}</p>`;
+    });
+    container.innerHTML = html;
+
+    // Añadir eventos a los dropzones (tap-tap y drag&drop nativo)
+    document.querySelectorAll('.dropzone').forEach(dz => {
+        dz.addEventListener('dragover', e => {
+            e.preventDefault();
+            e.dataTransfer.dropEffect = 'move';
+            dz.style.borderColor = 'var(--orange)';
+        });
+        dz.addEventListener('dragleave', () => { dz.style.borderColor = ''; });
+        dz.addEventListener('drop', e => {
+            e.preventDefault();
+            dz.style.borderColor = '';
+            const word = e.dataTransfer.getData('text/plain');
+            if (word) dropWordIntoDz(dz, word);
+            clearBankSelection();
+        });
+        dz.addEventListener('click', e => {
+            e.stopPropagation();
+            if (g1Checked) return;
+            if (selectedWordBankItem) {
+                dropWordIntoDz(dz, selectedWordBankItem.dataset.word);
+                clearBankSelection();
+            }
+        });
+        dz.addEventListener('touchend', e => {
+            e.preventDefault();
+            e.stopPropagation();
+            if (g1Checked) return;
+            if (selectedWordBankItem) {
+                dropWordIntoDz(dz, selectedWordBankItem.dataset.word);
+                clearBankSelection();
+            }
+        });
+    });
+
+    // Banco de palabras: las elegidas, en orden aleatorio
+    const bankWords = g1ChosenBlanks.map(cb => cb.bw).sort(() => Math.random() - 0.5);
+    bankWords.forEach(word => {
+        const el = document.createElement('div');
+        el.className = 'draggable-word';
+        el.textContent = word;
+        el.draggable = true;
+        el.dataset.word = word;
+
+        // Drag nativo (desktop)
+        el.addEventListener('dragstart', e => {
+            if (el.classList.contains('hidden') || g1Checked) { e.preventDefault(); return; }
+            e.dataTransfer.setData('text/plain', word);
+            e.dataTransfer.effectAllowed = 'move';
+            selectedWordBankItem = el;
+            document.querySelectorAll('.draggable-word').forEach(w => w.classList.remove('selected'));
+            el.classList.add('selected');
+        });
+        el.addEventListener('dragend', () => { setTimeout(clearBankSelection, 80); });
+
+        // Tap-tap
+        const handleBankTap = (e) => {
+            e.preventDefault();
+            e.stopPropagation();
+            if (el.classList.contains('hidden') || g1Checked) return;
+            if (selectedWordBankItem === el) { clearBankSelection(); return; }
+            document.querySelectorAll('.draggable-word').forEach(w => w.classList.remove('selected'));
+            selectedWordBankItem = el;
+            el.classList.add('selected');
+            reproducirSonidoTap();
+        };
+        el.addEventListener('click', handleBankTap);
+        el.addEventListener('touchend', handleBankTap);
+
+        bank.appendChild(el);
+    });
+
+    // Click en fondo del contenedor: deseleccionar
+    document.getElementById('textContainer').addEventListener('click', () => clearBankSelection());
+
+    updateProgress('progressFill1', 0);
 }
 
-function g1PlayCurrentAudio() {
+function clearBankSelection() {
+    document.querySelectorAll('.draggable-word').forEach(w => w.classList.remove('selected'));
+    selectedWordBankItem = null;
+}
+
+function dropWordIntoDz(dz, word) {
+    if (g1Checked) return;
+    // Si el dropzone ya tiene una palabra, devolverla al banco primero
+    const existing = dz.querySelector('.placed-word');
+    if (existing) {
+        returnWordToBank(existing.dataset.word);
+        dz.innerHTML = '';
+        dz.classList.remove('filled');
+    }
+    // Ocultar del banco
+    const bankItem = Array.from(document.querySelectorAll('.draggable-word'))
+        .find(el => el.dataset.word === word && !el.classList.contains('hidden'));
+    if (!bankItem) return;
+    bankItem.classList.add('hidden');
+
+    const span = document.createElement('span');
+    span.className = 'placed-word';
+    span.textContent = word;
+    span.dataset.word = word;
+
+    const removeFromDz = (e) => {
+        if (g1Checked) return;
+        e.stopPropagation();
+        e.preventDefault();
+        returnWordToBank(word);
+        dz.innerHTML = '';
+        dz.classList.remove('filled');
+        reproducirSonidoTap();
+    };
+    span.addEventListener('click', removeFromDz);
+    span.addEventListener('touchend', removeFromDz);
+
+    dz.appendChild(span);
+    dz.classList.add('filled');
     reproducirSonidoTap();
-    const el = document.getElementById('g1CurrentWord');
-    if (el && el.textContent) speakText(el.textContent);
 }
 
-function handleG1Click(cell, item) {
-    window.speechSynthesis && window.speechSynthesis.cancel();
-    totalAttempts++;
-
-    const expected = g1WordQueue[g1QueueIndex];
-
-    // Clicking an already-solved cell is treated as a mistake, same as any wrong cell
-    if (cell.classList.contains('solved-cell') || item.name !== expected.name) {
-        cell.classList.add('error-cell');
-        reproducirSonidoError();
-        setTimeout(() => cell.classList.remove('error-cell'), 500);
-        return;
-    }
-
-    // Correct
-    g1CorrectSelected.push(item.name);
-    cell.classList.add('solved-cell'); // locks the cell from further valid clicks, no visual hint
-    cell.classList.add('correct-cell'); // brief green flash only
-    reproducirSonidoCorrecto();
-    setTimeout(() => cell.classList.remove('correct-cell'), 300);
-
-    const progress = (g1CorrectSelected.length / g1GridItems.length) * 100;
-    updateProgress('progressFill1', progress);
-
-    if (g1CorrectSelected.length === g1GridItems.length) {
-        // All done — level complete
-        updateProgress('progressFill1', 100);
-        setTimeout(() => {
-            window.speechSynthesis && window.speechSynthesis.cancel();
-            reproducirSonidoCompletado();
-            advanceToNextGame();
-        }, 600);
-    } else {
-        // Move to next word in queue
-        g1QueueIndex++;
-        showG1CurrentWord();
-    }
+function returnWordToBank(word) {
+    const bankItem = Array.from(document.querySelectorAll('.draggable-word'))
+        .find(el => el.dataset.word === word);
+    if (bankItem) bankItem.classList.remove('hidden');
 }
+
+document.getElementById('checkGame1Btn').onclick = () => {
+    if (g1Checked) return;
+    g1Checked = true;
+    stopTimer();
+    let correctCount = 0;
+    let allCorrect = true;
+
+    document.querySelectorAll('.dropzone').forEach(dz => {
+        const placed = dz.querySelector('.placed-word');
+        const expected = dz.dataset.answer;
+        dz.classList.remove('correct', 'incorrect');
+
+        if (placed && placed.dataset.word.toLowerCase() === expected.toLowerCase()) {
+            dz.classList.add('correct');
+            correctCount++;
+        } else {
+            dz.classList.add('incorrect');
+            allCorrect = false;
+        }
+    });
+
+    scoreData.g1Correct = correctCount;
+    scoreData.g1Total = document.querySelectorAll('.dropzone').length;
+    document.getElementById('checkGame1Btn').classList.add('hidden');
+    document.getElementById('continueGame1Btn').classList.remove('hidden');
+    updateProgress('progressFill1', 50);
+
+    if (allCorrect) reproducirSonidoCorrecto();
+    else reproducirSonidoError();
+};
+
+document.getElementById('continueGame1Btn').onclick = () => {
+    reproducirSonidoTap();
+    startGlobalTimer();
+    initGame2();
+    showScreen('game2Screen');
+};
 
 /* ====================================================
-   GAME 2: CLASSIFY
+   JUEGO 2: ORDENAR FASES
 ===================================================== */
-const CLASSIFY_GROUPS = ['Senses', 'Nervous System', 'Locomotor System'];
-let g2Items = []; // shuffled
-let g2CurrentIndex = 0;
+let g2Order = []; // orden actual de los índices (0-4)
+let g2Checked = false;
+let g2Attempts = 0;
 
 function initGame2() {
-    window.speechSynthesis && window.speechSynthesis.cancel();
-    g2Items = shuffle([...ALL_ITEMS]);
-    g2CurrentIndex = 0;
+    g2Checked = false;
+    g2Attempts = 0;
+    scoreData.g2Correct = 0;
+
+    // Orden aleatorio inicial
+    g2Order = [0, 1, 2, 3, 4].sort(() => Math.random() - 0.5);
+
+    document.getElementById('checkGame2Btn').classList.remove('hidden');
+    document.getElementById('continueGame2Btn').classList.add('hidden');
     updateProgress('progressFill2', 0);
+    renderOrderingList();
+}
 
-    // Fixed button order: Senses, Nervous System, Locomotor System
-    ['A','B','C'].forEach((ltr, i) => {
-        const btn = document.getElementById(`classifyBtn${ltr}`);
-        btn.textContent = CLASSIFY_GROUPS[i];
-        btn.dataset.group = CLASSIFY_GROUPS[i];
+function renderOrderingList() {
+    const list = document.getElementById('orderingList');
+    list.innerHTML = '';
+    const phases = i18n[currentLang].phases;
+
+    g2Order.forEach((phaseIdx, pos) => {
+        const item = document.createElement('div');
+        item.className = 'ordering-item';
+
+        const card = document.createElement('div');
+        card.className = 'ordering-card';
+        card.textContent = phases[phaseIdx];
+        card.dataset.origIndex = phaseIdx;
+        card.id = `ocard_${pos}`;
+
+        const arrows = document.createElement('div');
+        arrows.className = 'arrow-btns';
+
+        const upBtn = document.createElement('button');
+        upBtn.className = 'arrow-btn';
+        upBtn.innerHTML = '▲';
+        upBtn.disabled = pos === 0;
+        upBtn.onclick = () => {
+            if (g2Checked) return;
+            reproducirSonidoTap();
+            movePhase(pos, pos - 1);
+        };
+
+        const downBtn = document.createElement('button');
+        downBtn.className = 'arrow-btn';
+        downBtn.innerHTML = '▼';
+        downBtn.disabled = pos === g2Order.length - 1;
+        downBtn.onclick = () => {
+            if (g2Checked) return;
+            reproducirSonidoTap();
+            movePhase(pos, pos + 1);
+        };
+
+        arrows.appendChild(upBtn);
+        arrows.appendChild(downBtn);
+        item.appendChild(card);
+        item.appendChild(arrows);
+        list.appendChild(item);
+    });
+}
+
+function movePhase(fromIdx, toIdx) {
+    if (toIdx < 0 || toIdx >= g2Order.length) return;
+    const tmp = g2Order[fromIdx];
+    g2Order[fromIdx] = g2Order[toIdx];
+    g2Order[toIdx] = tmp;
+    renderOrderingList();
+}
+
+document.getElementById('checkGame2Btn').onclick = () => {
+    if (g2Checked) return;
+    g2Attempts++;
+    let correctCount = 0;
+    const cards = document.querySelectorAll('.ordering-card');
+    let allCorrect = true;
+
+    cards.forEach((card, pos) => {
+        card.classList.remove('correct-highlight', 'incorrect-highlight');
+        const phaseIdx = parseInt(card.dataset.origIndex);
+        if (phaseIdx === pos) {
+            card.classList.add('correct-highlight');
+            correctCount++;
+        } else {
+            card.classList.add('incorrect-highlight');
+            allCorrect = false;
+        }
     });
 
-    showG2Item();
-}
+    scoreData.g2Correct = correctCount;
 
-function showG2Item() {
-    if (g2CurrentIndex >= g2Items.length) return;
-    const item = g2Items[g2CurrentIndex];
-    document.getElementById('classifyImg').src = item.img;
-    document.getElementById('classifyImg').alt = item.name;
-    document.getElementById('g2CurrentWord').textContent = item.name;
-    document.getElementById('g2LevelIndicator').textContent = `${g2CurrentIndex + 1}/10`;
-
-    // Reset button states
-    ['A','B','C'].forEach(ltr => {
-        const btn = document.getElementById(`classifyBtn${ltr}`);
-        btn.classList.remove('correct-btn','error-btn');
-        btn.disabled = false;
-    });
-
-    speakText(item.name);
-}
-
-function g2PlayCurrentAudio() {
-    reproducirSonidoTap();
-    const el = document.getElementById('g2CurrentWord');
-    if (el && el.textContent) speakText(el.textContent);
-}
-
-function checkClassify(btn) {
-    window.speechSynthesis && window.speechSynthesis.cancel();
-    totalAttempts++;
-
-    const chosen = btn.dataset.group;
-    const item = g2Items[g2CurrentIndex];
-
-    if (chosen === item.group) {
-        // Correct
-        btn.classList.add('correct-btn');
+    if (allCorrect) {
+        g2Checked = true;
+        stopTimer();
         reproducirSonidoCorrecto();
-
-        const progress = ((g2CurrentIndex + 1) / g2Items.length) * 100;
-        updateProgress('progressFill2', progress);
-
-        // Disable all buttons momentarily
-        ['A','B','C'].forEach(ltr => document.getElementById(`classifyBtn${ltr}`).disabled = true);
-
-        setTimeout(() => {
-            g2CurrentIndex++;
-            if (g2CurrentIndex >= g2Items.length) {
-                // Done — go through game order, not directly to finish
-                updateProgress('progressFill2', 100);
-                window.speechSynthesis && window.speechSynthesis.cancel();
-                reproducirSonidoCompletado();
-                setTimeout(advanceToNextGame, 400);
-            } else {
-                showG2Item();
-            }
-        }, 300);
+        updateProgress('progressFill2', 100);
+        document.getElementById('checkGame2Btn').classList.add('hidden');
+        document.getElementById('continueGame2Btn').classList.remove('hidden');
     } else {
-        // Wrong
-        btn.classList.add('error-btn');
         reproducirSonidoError();
+        // Permite volver a intentarlo — los colores se limpian en el siguiente render
         setTimeout(() => {
-            btn.classList.remove('error-btn');
-        }, 500);
+            // Limpiar highlights para permitir reintentar
+            document.querySelectorAll('.ordering-card').forEach(c => {
+                c.classList.remove('correct-highlight', 'incorrect-highlight');
+            });
+        }, 1200);
     }
-}
+};
 
-/* ====================================================
-   GAME ORDER & NAVIGATION
-===================================================== */
-function startGame() {
-    totalAttempts = 0;
-    timerStopped = false;
-    elapsed = 0;
-    timerInterval = null;
-    gameOrder = ['game1','game2'];
-    currentGameIndex = 0;
-    startGlobalTimer();
-    launchCurrentGame();
-}
-
-function launchCurrentGame() {
-    const g = gameOrder[currentGameIndex];
-    if (g === 'game1') {
-        initGame1();
-        showScreen('game1Screen');
-    } else {
-        initGame2();
-        showScreen('game2Screen');
-    }
-}
-
-function advanceToNextGame() {
-    currentGameIndex++;
-    if (currentGameIndex < gameOrder.length) {
-        launchCurrentGame();
-    } else {
-        finishGame();
-    }
-}
+document.getElementById('continueGame2Btn').onclick = () => {
+    reproducirSonidoTap();
+    finishGame();
+};
 
 /* ====================================================
    PANTALLA FINAL
 ===================================================== */
 function finishGame() {
-    window.speechSynthesis && window.speechSynthesis.cancel();
     stopTimer();
     finalTimeVal = elapsed;
 
-    const score = Math.max(0, Math.round(100 - ((totalAttempts - MIN_INTERACTIONS) * (100 / MIN_INTERACTIONS))));
-    finalScoreVal = score;
+    // Fórmula: (((g1Correct / g1Total) + (g2Correct / 5)) / 2) * 100
+    const val1 = scoreData.g1Total > 0 ? scoreData.g1Correct / scoreData.g1Total : 0;
+    const val2 = scoreData.g2Correct / 5;
+    finalScoreVal = Math.round(((val1 + val2) / 2) * 100);
 
-    // Cancel all audio
+    // Cancelar todos los audios de juego
     Object.values(audioObjects).forEach(a => { try { a.pause(); a.currentTime = 0; } catch(e){} });
 
     document.getElementById('finalScore').textContent = finalScoreVal;
@@ -854,15 +1156,20 @@ function finishGame() {
 
     const trophyBox = document.getElementById('trophyBox');
     const msg = document.getElementById('finalMsg');
+    const t = i18n[currentLang];
 
     if (finalScoreVal === 100) {
         trophyBox.style.display = 'block';
-        msg.textContent = 'Well done, full marks!';
+        msg.textContent = t.msgPerfect;
         reproducirSonidoVictoria();
         createConfetti();
+    } else if (finalScoreVal >= 80) {
+        trophyBox.style.display = 'none';
+        msg.textContent = t.msgGood;
+        reproducirSonidoCompletado();
     } else {
         trophyBox.style.display = 'none';
-        msg.textContent = 'Good job! Keep practising!';
+        msg.textContent = t.msgBad;
         reproducirSonidoCompletado();
     }
 
@@ -871,7 +1178,7 @@ function finishGame() {
 }
 
 /* ====================================================
-   CONFETTI
+   CONFETI
 ===================================================== */
 function createConfetti() {
     for (let i = 0; i < 100; i++) {
@@ -892,24 +1199,13 @@ function createConfetti() {
 }
 
 /* ====================================================
-   UTILITIES
-===================================================== */
-function shuffle(arr) {
-    for (let i = arr.length - 1; i > 0; i--) {
-        const j = Math.floor(Math.random() * (i + 1));
-        [arr[i], arr[j]] = [arr[j], arr[i]];
-    }
-    return arr;
-}
-
-/* ====================================================
    HALL OF FAME
 ===================================================== */
 function loadHallOfFame() {
     if (isHofLoading) return;
     isHofLoading = true;
     const tbody = document.getElementById('hofTableBody');
-    tbody.innerHTML = '<tr><td colspan="4" class="hall-of-fame-loading">Loading...</td></tr>';
+    tbody.innerHTML = '<tr><td colspan="4" class="hall-of-fame-loading">Cargando datos...</td></tr>';
 
     const url = `${APP_SCRIPT_URL}?action=read&sheet=${SHEET_NAME}`;
     const fetchPromise = fetch(url);
@@ -937,7 +1233,7 @@ function loadHallOfFame() {
                 const validData = processedData.filter(row => row.Puntuación !== null && !isNaN(parseFloat(row.Puntuación)));
 
                 if (validData.length === 0) {
-                    tbody.innerHTML = '<tr><td colspan="4" class="hall-of-fame-loading">Be the first to save your score!</td></tr>';
+                    tbody.innerHTML = '<tr><td colspan="4" class="hall-of-fame-loading">¡Sé el primero en guardar tu puntuación!</td></tr>';
                 } else {
                     validData.sort((a, b) => {
                         const sA = parseFloat(a.Puntuación) || 0;
@@ -962,11 +1258,12 @@ function loadHallOfFame() {
                     });
                 }
             } else {
-                tbody.innerHTML = '<tr><td colspan="4" class="hall-of-fame-error">Connection error.</td></tr>';
+                tbody.innerHTML = '<tr><td colspan="4" class="hall-of-fame-error">Error de conexión.</td></tr>';
             }
         })
-        .catch(() => {
-            tbody.innerHTML = '<tr><td colspan="4" class="hall-of-fame-error">Connection error or timeout.</td></tr>';
+        .catch(e => {
+            console.error("Error HoF:", e);
+            tbody.innerHTML = '<tr><td colspan="4" class="hall-of-fame-error">Error de conexión o timeout.</td></tr>';
         })
         .finally(() => { isHofLoading = false; });
 }
@@ -982,7 +1279,7 @@ function showSubmitModal(time, score) {
 function submitScore() {
     const btn = document.getElementById('submitScoreBtn');
     const name = document.getElementById('playerName').value.trim().substring(0, 15);
-    const surname = document.getElementById('playerSurname').value.trim().substring(0, 15);
+    const surname = document.getElementById('playerSurname').value.trim().substring(0, 20);
 
     if (!name || !surname) {
         alert("Por favor, rellena nombre y apellido");
@@ -991,7 +1288,7 @@ function submitScore() {
 
     const payload = { score: finalScoreVal, time: finalTimeVal, name, surname };
     const originalText = btn.textContent;
-    btn.textContent = "Sending...";
+    btn.textContent = "Enviando...";
     btn.disabled = true;
 
     function closeAfterSend() {
@@ -1012,19 +1309,22 @@ function submitScore() {
 }
 
 /* ====================================================
-   EVENTS
+   EVENTOS
 ===================================================== */
 document.getElementById('playBtn').onclick = () => {
-    unlockAudioContext();
-    forceInitTTS();
-    preloadImages();
+    unlockAudio();
     reproducirSonidoTap();
     showScreen('summaryScreen');
 };
 
 document.getElementById('startGameBtn').onclick = () => {
     reproducirSonidoTap();
-    startGame();
+    timerStopped = false;
+    elapsed = 0;
+    timerInterval = null;
+    startGlobalTimer();
+    initGame1();
+    showScreen('game1Screen');
 };
 
 document.getElementById('backToMenuBtn').onclick = () => {
@@ -1042,11 +1342,11 @@ document.getElementById('discardScoreBtn').onclick = () => {
     document.getElementById('submitModal').style.display = 'none';
 };
 
-document.getElementById('playerName').addEventListener('keypress', e => {
-    if (e.key === 'Enter') document.getElementById('playerSurname').focus();
-});
 document.getElementById('playerSurname').addEventListener('keypress', e => {
     if (e.key === 'Enter') document.getElementById('submitScoreBtn').click();
+});
+document.getElementById('playerName').addEventListener('keypress', e => {
+    if (e.key === 'Enter') document.getElementById('playerSurname').focus();
 });
 
 /* ====================================================
@@ -1054,7 +1354,7 @@ document.getElementById('playerSurname').addEventListener('keypress', e => {
 ===================================================== */
 document.addEventListener('DOMContentLoaded', () => {
     loadHallOfFame();
-    loadVoice();
+    setLang('es');
 });
 </script>
 

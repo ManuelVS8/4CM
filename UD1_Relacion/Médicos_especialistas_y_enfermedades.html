@@ -1,0 +1,1533 @@
+<!DOCTYPE html>
+<!-- saved from url=(0051)https://manuelvs8.github.io/M-dicos-y-enfermedades/ -->
+<html lang="es" translate="no" class="notranslate"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+    <meta name="google" content="notranslate">
+    <title>Médicos especialistas y enfermedades</title>
+    <link rel="icon" type="image/x-icon" href="https://raw.githubusercontent.com/ManuelVS8/Audios-juegos-SCIENCE/refs/heads/main/icono.ico">
+    <style>
+        * { box-sizing: border-box; margin:0; padding:0; }
+        :root {
+            --blue:#001DFF;
+            --blue-dark:#04032B;
+            --blue-700:#1a3a5f;
+            --blue-600:#254fba;
+            --orange:#f59e42;
+            --orange-700:#e67e22;
+            --bg-grad-1:#1a3a5f;
+            --bg-grad-2:#0d2340;
+            --white:#ffffff;
+            --green:#2ecc71;
+            --green-700:#219150;
+            --red:#e74c3c;
+            --panel:#E8EAFF;
+            --pastel-blue:#e3f2fd;
+            --pastel-orange:#ffe0b2;
+            --pastel-green:#e1f5ea;
+        }
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, var(--bg-grad-1) 0%, var(--bg-grad-2) 100%);
+            min-height:100vh; display:flex; justify-content:center; align-items:flex-start;
+            padding:20px 12px; color:#333;
+        }
+        .game-container {
+            background:var(--white); border-radius:16px; box-shadow:0 12px 24px rgba(0,0,0,.12);
+            padding:1.2rem; max-width:980px; width:100%; min-height:640px; position:relative; overflow:hidden;
+            display:flex; flex-direction:column; margin-bottom:2rem;
+        }
+        header { text-align:center; margin-bottom:.4rem; margin-top:3.2rem; }
+        h1 { color:var(--blue-dark); font-size:clamp(1.6rem,4.5vw,2.6rem); font-weight:900; letter-spacing:.5px; }
+        .subtitle { color:var(--blue-700); font-size:clamp(.95rem,3vw,1.15rem); margin-top:.25rem; }
+        .highlight-keyword { color:var(--orange); font-weight:800; }
+
+        /* Buttons */
+        .btn { color:#fff; border:none; padding:.75rem 1.2rem; border-radius:10px; cursor:pointer; font-weight:800;
+            transition:transform .08s ease, box-shadow .2s ease, background-color .25s ease; min-width:140px; height:48px;
+            display:inline-flex; align-items:center; justify-content:center; font-size:1rem; }
+        .btn:hover { transform:translateY(-2px); box-shadow:0 6px 14px rgba(0,0,0,.12); }
+        .btn:active { transform:translateY(0) scale(.97); }
+        .btn-primary { background:var(--orange); }
+        .btn-primary:hover { background:var(--orange-700); }
+        .btn-blue { background:var(--blue-600); }
+        .btn-blue:hover { filter:brightness(.9); }
+        .btn-ghost { background:#e6f2ff; color:var(--blue-700); }
+        .btn-continue { background:var(--blue-600); display:none; }
+        .btn-continue.show { display:inline-flex; }
+
+        .screen { display:none; animation:fadeIn .35s ease; flex-direction:column; flex:1; }
+        .screen.active { display:flex; }
+        @keyframes fadeIn { from{opacity:0;transform:translateY(12px);} to{opacity:1;transform:translateY(0);} }
+
+        .game-info { display:flex; gap:.6rem; align-items:center; justify-content:space-between; margin:.3rem 0 .8rem; flex-wrap:wrap; }
+        .timer { font-weight:900; color:var(--blue-700); font-size:clamp(.95rem,2.3vw,1.15rem); }
+        .progress-bar { flex:1; height:10px; background:#e6f2ff; border-radius:999px; overflow:hidden; }
+        .progress-fill { height:100%; width:0%; background:linear-gradient(90deg, var(--orange) 0%, var(--orange-700) 100%); transition:width .3s ease; }
+
+        /* Top controls */
+        .top-controls { position:absolute; top:.8rem; right:1rem; display:flex; align-items:center; gap:8px; z-index:20; }
+        .lang-pill { display:flex; align-items:center; background:#fff; border-radius:999px; padding:3px; gap:3px;
+            box-shadow:0 2px 8px rgba(0,0,0,0.12); border:1px solid #e0e0e0; }
+        .lang-pill button { width:34px; height:34px; border-radius:50%; border:none; font-size:1.15rem; cursor:pointer;
+            display:flex; align-items:center; justify-content:center; background:transparent;
+            transition:background .2s, opacity .2s, transform .15s; }
+        .lang-pill button.active-lang { background:var(--blue-600); transform:scale(1.08); }
+        .lang-pill button:not(.active-lang) { opacity:.5; }
+        .lang-pill button:hover:not(.active-lang) { opacity:.8; transform:scale(1.05); }
+        body.rtl-active #startTitle, body.rtl-active #startSubtitle, body.rtl-active #startAdvice,
+        body.rtl-active #summaryTitle, body.rtl-active #summaryIntro, body.rtl-active #accTitle1,
+        body.rtl-active #accBody1, body.rtl-active #accTitle2, body.rtl-active #accBody2,
+        body.rtl-active #accTitle3, body.rtl-active #accBody3,
+        body.rtl-active #game1Title, body.rtl-active #game2Title, body.rtl-active #game3Title, body.rtl-active #game4Title,
+        body.rtl-active #boxOftalmologoTitle1, body.rtl-active #boxOtorrinoTitle1, body.rtl-active #boxDermatologoTitle1,
+        body.rtl-active #boxOftalmologoTitle2, body.rtl-active #boxOtorrinoTitle2, body.rtl-active #boxDermatologoTitle2,
+        body.rtl-active .quiz-text, body.rtl-active [data-orig-index],
+        body.rtl-active #finalTitle, body.rtl-active .modal-content h2, body.rtl-active .modal-content p {
+            direction: rtl; text-align: right;
+        }
+        body.rtl-active #accBody1 ul, body.rtl-active #accBody2 ul, body.rtl-active #accBody3 ul { padding-left:0; padding-right:1.4rem; }
+        .mute-btn { background:linear-gradient(135deg, var(--orange), var(--orange-700)); color:#fff; border:2px solid #fff;
+            width:38px; height:38px; border-radius:50%; cursor:pointer; display:flex; align-items:center; justify-content:center;
+            z-index:20; transition:transform .2s, box-shadow .2s; }
+        .mute-btn:hover { transform:scale(1.1); box-shadow:0 4px 12px rgba(245,158,66,.4); }
+        .mute-btn.muted { background:linear-gradient(135deg,#999,#777); }
+        .mute-btn svg { width:20px; height:20px; pointer-events:none; }
+
+        /* Pantalla Inicio */
+        .start-content { display:flex; flex-direction:column; justify-content:center; align-items:center; flex:1; gap:1rem; padding:1rem; }
+        .advice-box { background:var(--panel); border-left:4px solid var(--blue-700); padding:1rem 1.2rem; border-radius:12px;
+            color:var(--blue-700); max-width:760px; text-align:center; font-size:clamp(1rem,3vw,1.15rem); }
+        .start-image { max-width:300px; width:100%; margin:0 auto; }
+
+        @keyframes shakeAnim {
+            0%,100%{transform:translateX(0);}
+            20%{transform:translateX(-5px);}
+            40%{transform:translateX(5px);}
+            60%{transform:translateX(-5px);}
+            80%{transform:translateX(5px);}
+        }
+
+        /* Pantalla Resumen (acordeón) */
+        .summary-wrapper { padding:.4rem 0 1rem; width:100%; flex:1; overflow-y:auto; display:flex; flex-direction:column; gap:1rem; }
+        .summary-intro { text-align:center; color:var(--blue-700); font-weight:700; margin-bottom:.2rem; font-size:clamp(1rem,3vw,1.15rem); }
+        .accordion-item { border-radius:14px; margin-bottom:4px; overflow:hidden; box-shadow:0 2px 10px rgba(0,0,0,.06); border:1px solid #e8e8e8; transition:box-shadow .25s ease; }
+        .accordion-item:hover { box-shadow:0 4px 16px rgba(0,0,0,.1); }
+        .accordion-item.acc-sentidos .accordion-header { background:linear-gradient(135deg,#90caf9 0%,#42a5f5 100%); }
+        .accordion-item.acc-locomotor .accordion-header { background:linear-gradient(135deg,#ffcc80 0%,#ffa726 100%); }
+        .accordion-item.acc-nervioso .accordion-header { background:linear-gradient(135deg,#a5d6a7 0%,#66bb6a 100%); }
+        .accordion-header { padding:1rem 1.2rem; cursor:pointer; display:flex; align-items:center; justify-content:space-between; color:#fff; user-select:none; transition:filter .15s ease; }
+        .accordion-header:hover { filter:brightness(1.05); }
+        .accordion-header:active { filter:brightness(.95); }
+        .accordion-header-left { display:flex; align-items:center; gap:.7rem; }
+        .accordion-header-icon { font-size:clamp(1.5rem,4vw,2rem); line-height:1; filter:drop-shadow(0 1px 2px rgba(0,0,0,.2)); }
+        .accordion-header-title { font-size:clamp(1rem,3vw,1.2rem); font-weight:900; letter-spacing:.3px; text-shadow:0 1px 3px rgba(0,0,0,.15); }
+        .accordion-chevron { width:28px; height:28px; display:flex; align-items:center; justify-content:center; transition:transform .3s cubic-bezier(.4,0,.2,1); flex-shrink:0; }
+        .accordion-chevron svg { width:22px; height:22px; stroke:#fff; stroke-width:3; fill:none; }
+        .accordion-item.open .accordion-chevron { transform:rotate(180deg); }
+        .accordion-body { max-height:0; overflow:hidden; transition:max-height .4s cubic-bezier(.4,0,.2,1), padding .3s ease; background:#fff; }
+        .accordion-item.open .accordion-body { max-height:900px; }
+        .accordion-body-inner { padding:.9rem 1.2rem 1.2rem; font-size:.92rem; color:#444; line-height:1.55; }
+        .accordion-body-inner p { margin-bottom:.5rem; }
+        .accordion-body-inner ul { padding-left:1.2rem; margin-bottom:.6rem; }
+        .accordion-body-inner li { margin-bottom:.3rem; }
+        .accordion-body-inner strong { color:var(--blue-dark); }
+        .acc-note { font-style:italic; color:#666; border-top:1px dashed #ddd; padding-top:.5rem; margin-top:.3rem; }
+        .play-btn-container { text-align:center; margin-top:.4rem; padding-top:.4rem; }
+
+        /* Pantallas Juegos 1-2: clasificación en cajas */
+        .game1-layout { display:flex; flex-direction:column; height:100%; gap:.8rem; padding-bottom:.5rem; }
+        .bank-area { background:#fdfdfd; background-image:radial-gradient(#cbd5e1 1px, transparent 1px); background-size:15px 15px;
+            padding:10px; border-radius:12px; min-height:60px; display:flex; flex-wrap:wrap; justify-content:center; align-items:center;
+            gap:8px; border:2px dashed #b0bec5; }
+
+        .draggable-item { background:#ffffff; border:1px solid #e0e0e0; color:#455a64; padding:8px 14px; border-radius:25px;
+            cursor:pointer; font-weight:600; font-size:.88rem; box-shadow:0 3px 5px rgba(0,0,0,.05); transition:all .2s;
+            user-select:none; text-align:center; }
+        .draggable-item:hover { background:#f8f9fa; transform:translateY(-2px); border-color:var(--blue-700); }
+        .draggable-item.selected { background:var(--orange); color:white; border:none; transform:translateY(-2px) scale(1.05); }
+
+        .draggable-item.correct {
+            background:rgba(46,204,113,.35) !important; color:var(--green-700) !important; border:2px solid var(--green) !important;
+            box-shadow:0 4px 10px rgba(46,204,113,.25) !important;
+        }
+        .draggable-item.correct::before { content:'✓ '; font-weight:bold; }
+
+        .draggable-item.wrong {
+            background:rgba(231,76,60,.35) !important; color:#c0392b !important; border:2px solid var(--red) !important;
+            box-shadow:0 4px 10px rgba(231,76,60,.25) !important;
+            animation:shakeAnim .5s ease-in-out;
+        }
+        .draggable-item.wrong::before { content:'✕ '; font-weight:bold; }
+
+        .sorting-area { flex:1; display:grid; grid-template-columns:repeat(3,1fr); gap:.8rem; }
+        @media (max-width:700px) { .sorting-area { grid-template-columns:1fr; } }
+
+        .sort-box { border-radius:10px; padding:8px; display:flex; flex-direction:column; min-height:110px; border:2px solid; }
+        .box-oftalmologo { background:var(--pastel-blue); border-color:var(--blue-600); }
+        .box-otorrino { background:var(--pastel-orange); border-color:var(--orange); }
+        .box-dermatologo { background:var(--pastel-green); border-color:var(--green-700); }
+
+        .sort-box-header { font-weight:800; text-align:center; margin-bottom:6px; padding-bottom:4px;
+            border-bottom:2px solid rgba(0,0,0,.08); font-size:.9rem; display:flex; align-items:center; justify-content:center; gap:6px; }
+        .box-oftalmologo .sort-box-header { color:var(--blue-700); }
+        .box-otorrino .sort-box-header { color:var(--orange-700); }
+        .box-dermatologo .sort-box-header { color:var(--green-700); }
+        .sort-content { flex:1; display:flex; flex-wrap:wrap; gap:6px; justify-content:center; align-content:flex-start; min-height:40px; }
+        .sort-content .draggable-item { background:rgba(255,255,255,.95); font-size:.82rem; padding:6px 10px; }
+        .sort-box.disabled { pointer-events:none; }
+
+        /* Pantallas Juegos 3-4: tarjeta con definición + opciones */
+        .quiz-wrapper { display:flex; flex-direction:column; align-items:center; gap:1.2rem; width:100%; max-width:760px; margin:0 auto; flex:1; justify-content:flex-start; padding-top:.5rem; }
+        .quiz-card {
+            background:#fff; border-radius:18px; padding:1.8rem 1.6rem; width:100%;
+            text-align:center; font-size:clamp(1.1rem,3vw,1.4rem); color:var(--blue-dark);
+            font-weight:600; line-height:1.5; border:2px solid #e0e0e0;
+            box-shadow:0 6px 20px rgba(0,0,0,.1), 0 2px 6px rgba(0,0,0,.06);
+            transition:border-color .2s, box-shadow .2s; position:relative;
+            min-height:190px; display:flex; align-items:center; justify-content:center;
+        }
+        .quiz-card::before {
+            content:''; position:absolute; top:0; left:0; right:0; height:6px;
+            background:linear-gradient(90deg, var(--blue-600), var(--orange), var(--green));
+            border-radius:18px 18px 0 0;
+        }
+        .quiz-card.flash-error { border-color:var(--red); animation:shakeAnim .3s ease-in-out; }
+
+        .quiz-buttons { display:grid; grid-template-columns:repeat(2, minmax(140px,1fr)); gap:10px; width:100%; }
+        @media (min-width:700px) { .quiz-buttons { grid-template-columns:repeat(3, minmax(140px,1fr)); } }
+
+        .tpl-card {
+            background-color:#3498db; color:#ffffff; border:4px solid transparent;
+            border-radius:10px; padding:10px 12px; min-height:80px; width:100%;
+            display:flex; align-items:center; justify-content:center;
+            font-weight:700; font-size:clamp(.9rem,2vw,1.05rem); text-align:center;
+            cursor:pointer; transition:all .2s ease; user-select:none; position:relative; line-height:1.3;
+            box-shadow:none;
+        }
+        .tpl-card:hover:not(.matched) { transform:scale(1.03); box-shadow:0 4px 8px rgba(0,0,0,.2); }
+        .tpl-card.matched { background-color:#2ecc71; border-color:transparent; color:#fff; animation:pop .3s ease; cursor:default; box-shadow:0 3px 10px rgba(46,204,113,.35); }
+        .tpl-card.flash-error { background-color:#e74c3c; border-color:#e74c3c; animation:shakeAnim .3s ease-in-out; }
+
+        @keyframes pop {
+            0% { transform:scale(1); }
+            50% { transform:scale(1.06); }
+            100% { transform:scale(1); }
+        }
+
+        /* Pantalla Final */
+        .results { display:flex; flex-direction:column; align-items:center; gap:.6rem; text-align:center; flex:1; justify-content:center; }
+        .final-title { color:var(--blue-dark); font-weight:900; }
+        .big-score { font-size:clamp(2.2rem,6vw,3.4rem); color:var(--blue-600); font-weight:900; }
+        .score-title { font-size:1.0rem; color:var(--blue-700); margin-top:1rem; }
+        .final-time { color:var(--blue-700); }
+        #trophyBox { display:none; font-size:clamp(4rem,10vw,7rem); margin:.5rem 0; text-align:center;
+            align-self:center; animation:bounce 1s ease infinite; color:var(--orange); line-height:1; }
+        @keyframes bounce { 0%,100%{transform:translateY(0) scale(1);} 50%{transform:translateY(-15px) scale(1.1);} }
+        .credit { color:var(--blue-700); margin-top:1rem; }
+        #finalMsg { font-size:clamp(1.2rem,4.2vw,1.8rem); font-weight:800; color:var(--blue-700); margin-top:.6rem; }
+        .school-logo { display:block; width:160px; max-width:28%; height:auto; margin-top:.8rem; border-radius:8px; object-fit:contain; }
+        @media (max-width:899px) { .school-logo { width:140px; max-width:160px; } }
+        @media (max-width:420px) { .school-logo { width:110px; max-width:40%; margin-top:.6rem; } }
+
+        /* Hall of Fame */
+        .hall-of-fame { background:var(--panel); border-radius:12px; padding:1rem; margin-top:1.5rem; width:100%; max-width:600px; }
+        .hall-of-fame-title { color:var(--blue-700); font-weight:800; font-size:1.2rem; text-align:center; margin-bottom:.8rem; }
+        .hall-of-fame-table { width:100%; border-collapse:collapse; font-size:.9rem; }
+        .hall-of-fame-table th { background:var(--blue-600); color:white; padding:.5rem; text-align:left; }
+        .hall-of-fame-table td { padding:.4rem .5rem; border-bottom:1px solid #ddd; }
+        .hall-of-fame-table tr:last-child td { border-bottom:none; }
+        .hall-of-fame-table tr:nth-child(even) { background-color:rgba(255,255,255,0.5); }
+        .hall-of-fame-error, .hall-of-fame-loading { padding:1rem; text-align:center; color:var(--blue-700); font-style:italic; }
+        .hall-of-fame-error { color:var(--red); }
+
+        /* Modal */
+        .modal-overlay { position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.5);
+            display:none; justify-content:center; align-items:center; z-index:1000; }
+        .modal-content { background:white; padding:2rem; border-radius:15px; width:90%; max-width:400px; text-align:center; box-shadow:0 10px 30px rgba(0,0,0,0.3); }
+        .modal-input { width:100%; padding:10px; margin:10px 0; border:2px solid #ddd; border-radius:8px; font-size:1rem; }
+
+        /* Confeti */
+        .confetti { position:fixed; width:10px; height:10px; border-radius:50%; animation:confetti-fall 3s linear forwards; z-index:999; }
+        @keyframes confetti-fall { 0%{transform:translate(0,-20px) rotate(0);opacity:1;} 100%{transform:translate(var(--tx),var(--ty)) rotate(360deg);opacity:0;} }
+
+        .hidden { display:none !important; }
+
+        @media (max-width:420px) { .btn { min-width:110px; padding:.6rem .9rem; height:44px; } }
+    </style>
+</head>
+<body>
+<div class="game-container">
+
+    <!-- Top Controls -->
+    <div class="top-controls">
+        <div class="lang-pill">
+            <button id="btnLangEs" class="active-lang" title="Español" onclick="applyLanguage(&#39;es&#39;)">🇪🇸</button>
+            <button id="btnLangEn" title="English" onclick="applyLanguage(&#39;en&#39;)">🇬🇧</button>
+            <button id="btnLangAr" title="العربية" onclick="applyLanguage(&#39;ar&#39;)">🇲🇦</button>
+        </div>
+        <button class="mute-btn" id="muteBtn" title="Silenciar/Activar sonido" onclick="toggleSound()">
+            <svg id="muteSvg" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"></polygon>
+                <path d="M15.54 8.46a5 5 0 0 1 0 7.07"></path>
+                <path d="M19.07 4.93a10 10 0 0 1 0 14.14"></path>
+            </svg>
+        </button>
+    </div>
+
+    <!-- ===== PANTALLA INICIO ===== -->
+    <section class="screen" id="startScreen">
+        <header>
+            <h1 id="startTitle">Médicos especialistas y enfermedades</h1>
+            <div class="subtitle" id="startSubtitle">Descubre qué médico trata cada enfermedad</div>
+        </header>
+        <div class="start-content">
+            <div class="advice-box" id="startAdvice">Descubre qué <span class="highlight-keyword">especialista</span> trata cada <span class="highlight-keyword">enfermedad</span> y qué lesiones afectan a nuestro cuerpo.<br><strong style="display:block;margin-top:.5rem;text-align:center;">¡Ánimo!</strong></div>
+            <button class="btn btn-primary" id="playBtn">Comenzar</button>
+            <img class="start-image" src="./Médicos especialistas y enfermedades_files/Niños.png" alt="Niños aprendiendo">
+            <div class="hall-of-fame" id="hallOfFame">
+                <div class="hall-of-fame-title">🏆 <span id="hofTitle">Mejores puntuaciones</span> 🏆</div>
+                <table class="hall-of-fame-table">
+                    <thead>
+                        <tr>
+                            <th id="hofPos">Posición</th>
+                            <th id="hofName">Nombre</th>
+                            <th id="hofPoints">Puntos</th>
+                            <th id="hofTime">Tiempo</th>
+                        </tr>
+                    </thead>
+                    <tbody id="hofTableBody"><tr><td colspan="4" class="hall-of-fame-loading">¡Sé el primero en guardar tu puntuación!</td></tr></tbody>
+                </table>
+            </div>
+        </div>
+    </section>
+
+    <!-- ===== PANTALLA RESUMEN (ACORDEÓN) ===== -->
+    <section class="screen" id="summaryScreen">
+        <header>
+            <h1 id="summaryTitle">Médicos y enfermedades</h1>
+        </header>
+        <div class="summary-wrapper">
+            <div class="summary-intro" id="summaryIntro">Toca cada bloque para ver la información</div>
+
+            <div class="accordion-item acc-sentidos" id="accSentidos">
+                <div class="accordion-header" onclick="toggleAccordion(&#39;accSentidos&#39;)">
+                    <div class="accordion-header-left"><span class="accordion-header-icon">👁️</span><span class="accordion-header-title" id="accTitle1">Médicos y enfermedades de los sentidos</span></div>
+                    <div class="accordion-chevron"><svg viewBox="0 0 24 24"><polyline points="6 9 12 15 18 9"></polyline></svg></div>
+                </div>
+                <div class="accordion-body"><div class="accordion-body-inner" id="accBody1"><p>Los médicos y especialistas que cuidan los órganos de nuestros sentidos son:</p><ul><li><strong>Oftalmólogo:</strong> ojo.</li><li><strong>Otorrinolaringólogo:</strong> oído, nariz y garganta.</li><li><strong>Dermatólogo:</strong> piel.</li></ul><p>Algunas de las principales enfermedades que tratan estos especialistas son:</p><ul><li><strong>Oftalmólogo:</strong> miopía, conjuntivitis y cataratas.</li><li><strong>Otorrinolaringólogo:</strong> otitis, sinusitis y laringitis.</li><li><strong>Dermatólogo:</strong> acné, dermatitis y psoriasis.</li></ul><p class="acc-note"><em>Nota:</em> Al oftalmólogo también se le llama oculista. No debe confundirse con el óptico-optometrista, que adapta gafas y lentes de contacto.</p></div></div>
+            </div>
+
+            <div class="accordion-item acc-locomotor" id="accLocomotor">
+                <div class="accordion-header" onclick="toggleAccordion(&#39;accLocomotor&#39;)">
+                    <div class="accordion-header-left"><span class="accordion-header-icon">🦴</span><span class="accordion-header-title" id="accTitle2">Lesiones del aparato locomotor</span></div>
+                    <div class="accordion-chevron"><svg viewBox="0 0 24 24"><polyline points="6 9 12 15 18 9"></polyline></svg></div>
+                </div>
+                <div class="accordion-body"><div class="accordion-body-inner" id="accBody2"><p>Principales lesiones del aparato locomotor:</p><ul><li><strong>Fractura:</strong> rotura de un hueso por una caída, un golpe o un accidente.</li><li><strong>Esguince:</strong> lesión de los ligamentos que unen los huesos de una articulación, normalmente por una torcedura.</li><li><strong>Tendinitis:</strong> inflamación de un tendón debido a un sobreesfuerzo o un mal movimiento.</li><li><strong>Luxación:</strong> un hueso se sale de su posición normal en una articulación.</li><li><strong>Artrosis:</strong> desgaste del cartílago de las articulaciones, propio de la edad.</li></ul><p>El médico especialista que trata las enfermedades y lesiones del aparato locomotor es el <strong>traumatólogo</strong>.</p></div></div>
+            </div>
+
+            <div class="accordion-item acc-nervioso" id="accNervioso">
+                <div class="accordion-header" onclick="toggleAccordion(&#39;accNervioso&#39;)">
+                    <div class="accordion-header-left"><span class="accordion-header-icon">🧠</span><span class="accordion-header-title" id="accTitle3">Enfermedades del sistema nervioso</span></div>
+                    <div class="accordion-chevron"><svg viewBox="0 0 24 24"><polyline points="6 9 12 15 18 9"></polyline></svg></div>
+                </div>
+                <div class="accordion-body"><div class="accordion-body-inner" id="accBody3"><p>Principales enfermedades del sistema nervioso:</p><ul><li><strong>Epilepsia:</strong> enfermedad que puede provocar convulsiones y pérdida de conocimiento.</li><li><strong>Párkinson:</strong> enfermedad que provoca temblores y dificultad para moverse.</li><li><strong>Migraña:</strong> dolor de cabeza muy intenso.</li><li><strong>Alzhéimer:</strong> enfermedad que provoca la pérdida progresiva de la memoria.</li><li><strong>Neuralgia:</strong> hormigueo o dolor intenso cuando un nervio se comprime o se daña.</li></ul><p>El médico especialista que trata las enfermedades del sistema nervioso es el <strong>neurólogo</strong>.</p></div></div>
+            </div>
+
+            <div class="play-btn-container">
+                <button class="btn btn-primary" id="startGameBtn">Comenzar juego</button>
+            </div>
+        </div>
+    </section>
+
+    <!-- ===== PANTALLA JUEGO 1: ESPECIALISTAS DE LOS SENTIDOS ===== -->
+    <section class="screen active" id="game1Screen">
+        <header>
+            <h1 id="game1Title">Clasifica los órganos según su especialista</h1>
+        </header>
+        <div class="game-info">
+            <div class="timer" id="timerDisplay1">00:52.4</div>
+            <div class="progress-bar"><div class="progress-fill" id="progressFill1" style="width: 0%;"></div></div>
+        </div>
+        <div class="game1-layout">
+            <div class="bank-area" id="g1Bank"></div>
+            <div class="sorting-area">
+                <div class="sort-box box-oftalmologo" data-type="oftalmologo">
+                    <div class="sort-box-header">👁️ <span id="boxOftalmologoTitle1">Oftalmólogo</span></div>
+                    <div class="sort-content"><div class="draggable-item" data-type="oftalmologo" data-game="1" data-orig-index="0" draggable="true">Ojo</div></div>
+                </div>
+                <div class="sort-box box-otorrino" data-type="otorrino">
+                    <div class="sort-box-header">👂 <span id="boxOtorrinoTitle1">Otorrinolaringólogo</span></div>
+                    <div class="sort-content"><div class="draggable-item" data-type="otorrino" data-game="1" data-orig-index="2" draggable="true">Oído</div><div class="draggable-item" data-type="otorrino" data-game="1" data-orig-index="1" draggable="true">Nariz</div><div class="draggable-item" data-type="otorrino" data-game="1" data-orig-index="3" draggable="true">Garganta</div></div>
+                </div>
+                <div class="sort-box box-dermatologo" data-type="dermatologo">
+                    <div class="sort-box-header">🧴 <span id="boxDermatologoTitle1">Dermatólogo</span></div>
+                    <div class="sort-content"><div class="draggable-item" data-type="dermatologo" data-game="1" data-orig-index="4" draggable="true">Piel</div></div>
+                </div>
+            </div>
+            <div style="text-align:center;">
+                <button class="btn btn-primary" id="checkBtnGame1" style="display: inline-flex;">Comprobar</button>
+                <button class="btn btn-continue" id="continueBtnGame1">Continuar</button>
+            </div>
+        </div>
+    </section>
+
+    <!-- ===== PANTALLA JUEGO 2: ENFERMEDADES COMUNES ===== -->
+    <section class="screen" id="game2Screen">
+        <header>
+            <h1 id="game2Title">¿Qué especialista trata las siguientes enfermedades?</h1>
+        </header>
+        <div class="game-info">
+            <div class="timer" id="timerDisplay2">00:52.4</div>
+            <div class="progress-bar"><div class="progress-fill" id="progressFill2" style="width: 0%;"></div></div>
+        </div>
+        <div class="game1-layout">
+            <div class="bank-area" id="g2Bank"></div>
+            <div class="sorting-area">
+                <div class="sort-box box-oftalmologo" data-type="oftalmologo">
+                    <div class="sort-box-header">👁️ <span id="boxOftalmologoTitle2">Oftalmólogo</span></div>
+                    <div class="sort-content"></div>
+                </div>
+                <div class="sort-box box-otorrino" data-type="otorrino">
+                    <div class="sort-box-header">👂 <span id="boxOtorrinoTitle2">Otorrinolaringólogo</span></div>
+                    <div class="sort-content"></div>
+                </div>
+                <div class="sort-box box-dermatologo" data-type="dermatologo">
+                    <div class="sort-box-header">🧴 <span id="boxDermatologoTitle2">Dermatólogo</span></div>
+                    <div class="sort-content"></div>
+                </div>
+            </div>
+            <div style="text-align:center;">
+                <button class="btn btn-primary" id="checkBtnGame2">Comprobar</button>
+                <button class="btn btn-continue" id="continueBtnGame2">Continuar</button>
+            </div>
+        </div>
+    </section>
+
+    <!-- ===== PANTALLA JUEGO 3: LESIONES DEL APARATO LOCOMOTOR ===== -->
+    <section class="screen" id="game3Screen">
+        <header>
+            <h1 id="game3Title">Principales lesiones del aparato locomotor</h1>
+        </header>
+        <div class="game-info">
+            <div class="timer" id="timerDisplay3">00:52.4</div>
+            <div class="progress-bar"><div class="progress-fill" id="progressFill3" style="width: 0%;"></div></div>
+        </div>
+        <div class="quiz-wrapper">
+            <div class="quiz-card" id="game3Card">
+                <span class="quiz-text" id="game3Text">-</span>
+            </div>
+            <div class="quiz-buttons" id="game3Buttons"></div>
+        </div>
+    </section>
+
+    <!-- ===== PANTALLA JUEGO 4: ENFERMEDADES DEL SISTEMA NERVIOSO ===== -->
+    <section class="screen" id="game4Screen">
+        <header>
+            <h1 id="game4Title">Enfermedades del sistema nervioso</h1>
+        </header>
+        <div class="game-info">
+            <div class="timer" id="timerDisplay4">00:52.4</div>
+            <div class="progress-bar"><div class="progress-fill" id="progressFill4" style="width: 0%;"></div></div>
+        </div>
+        <div class="quiz-wrapper">
+            <div class="quiz-card" id="game4Card">
+                <span class="quiz-text" id="game4Text">-</span>
+            </div>
+            <div class="quiz-buttons" id="game4Buttons"></div>
+        </div>
+    </section>
+
+    <!-- ===== PANTALLA FINAL ===== -->
+    <section class="screen" id="finalScreen">
+        <header>
+            <h1 class="final-title" id="finalTitle">Médicos y enfermedades</h1>
+        </header>
+        <div class="results">
+            <div id="trophyBox">🏆</div>
+            <div class="score-title" id="scoreLabel">Puntuación:</div>
+            <div class="big-score" id="finalScore">0</div>
+            <div class="final-time" id="finalTimeLabel">Tiempo: <span id="finalTime">00:00.0</span></div>
+            <div id="finalMsg"></div>
+            <button class="btn btn-primary" id="backToMenuBtn" style="background:var(--orange);">Volver al menú</button>
+            <span class="credit">Creado por Manuel J. Ventura</span>
+            <img class="school-logo" src="./Médicos especialistas y enfermedades_files/Siurot.png" alt="Logo del colegio">
+        </div>
+    </section>
+
+</div><!-- .game-container -->
+
+<!-- Modal HOF -->
+<div id="submitModal" class="modal-overlay">
+    <div class="modal-content">
+        <h3 id="modalTitle">¡Juego Terminado!</h3>
+        <p id="modalTimeLabel">Tu tiempo: <span id="modalTime">00:00.0</span></p>
+        <input type="text" id="playerName" class="modal-input" placeholder="Nombre" maxlength="15">
+        <input type="text" id="playerSurname" class="modal-input" placeholder="Apellido" maxlength="20">
+        <div style="display:flex;gap:10px;justify-content:center;">
+            <button id="submitScoreBtn" class="btn btn-primary">Guardar</button>
+            <button id="discardScoreBtn" class="btn btn-ghost">Cancelar</button>
+        </div>
+    </div>
+</div>
+
+<script>
+/* ====================================================
+   CONFIGURACIÓN GLOBAL
+===================================================== */
+const SHEET_NAME = "Enfermedades";
+const APP_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbxV6Bs0TlqjtE8nY-df6NsUSZTxVCcKYv1DuLmwEbbuRDt3sNs84QEz9MLe4_Aigywuag/exec";
+const MIN_ATTEMPTS = 26; // 5 + 9 + 6 + 6
+const TOTAL_ITEMS_GLOBAL = 26;
+
+let currentLang = 'es';
+let soundEnabled = true;
+let isMuted = false;
+let audioCtxRef = null;
+let startTime = 0;
+let timerInterval = null;
+let elapsed = 0;
+let timerStopped = false;
+let finalTimeVal = 0;
+let finalScoreVal = 0;
+let isHofLoading = false;
+let activeGame = null;
+let totalAttempts = 0;
+let totalCorrectGlobal = 0;
+
+/* ====================================================
+   DATOS DEL JUEGO (i18n)
+===================================================== */
+const gameDataI18n = {
+    es: {
+        clasif1: [
+            { text:"Ojo", type:"oftalmologo" },
+            { text:"Nariz", type:"otorrino" },
+            { text:"Oído", type:"otorrino" },
+            { text:"Garganta", type:"otorrino" },
+            { text:"Piel", type:"dermatologo" }
+        ],
+        clasif2: [
+            { text:"Miopía", type:"oftalmologo" },
+            { text:"Conjuntivitis", type:"oftalmologo" },
+            { text:"Cataratas", type:"oftalmologo" },
+            { text:"Otitis", type:"otorrino" },
+            { text:"Sinusitis", type:"otorrino" },
+            { text:"Laringitis", type:"otorrino" },
+            { text:"Acné", type:"dermatologo" },
+            { text:"Dermatitis", type:"dermatologo" },
+            { text:"Psoriasis", type:"dermatologo" }
+        ],
+        quiz3: [
+            { text:"Rotura de un hueso por una caída, un golpe o un accidente.", concept:"Fractura" },
+            { text:"Lesión de los ligamentos que unen los huesos de una articulación, normalmente por una torcedura.", concept:"Esguince" },
+            { text:"Inflamación de un tendón debido a un sobreesfuerzo o un mal movimiento.", concept:"Tendinitis" },
+            { text:"Un hueso se sale de su posición normal en una articulación.", concept:"Luxación" },
+            { text:"Desgaste del cartílago de las articulaciones, propio de la edad.", concept:"Artrosis" },
+            { text:"Especialista que trata las enfermedades del aparato locomotor.", concept:"Traumatólogo" }
+        ],
+        quiz4: [
+            { text:"Enfermedad que puede provocar convulsiones y pérdida de conocimiento.", concept:"Epilepsia" },
+            { text:"Enfermedad que provoca temblores y dificultad para moverse.", concept:"Párkinson" },
+            { text:"Dolor de cabeza muy intenso.", concept:"Migraña" },
+            { text:"Enfermedad que provoca la pérdida progresiva de la memoria.", concept:"Alzhéimer" },
+            { text:"Médico especialista en las enfermedades del sistema nervioso.", concept:"Neurólogo" },
+            { text:"Hormigueo o dolor intenso cuando un nervio se comprime o se daña.", concept:"Neuralgia" }
+        ]
+    },
+    ar: {
+        clasif1: [
+            { text:"العين", type:"oftalmologo" },
+            { text:"الأنف", type:"otorrino" },
+            { text:"الأذن", type:"otorrino" },
+            { text:"الحلق", type:"otorrino" },
+            { text:"الجلد", type:"dermatologo" }
+        ],
+        clasif2: [
+            { text:"قصر النظر", type:"oftalmologo" },
+            { text:"التهاب الملتحمة", type:"oftalmologo" },
+            { text:"إعتام عدسة العين", type:"oftalmologo" },
+            { text:"التهاب الأذن", type:"otorrino" },
+            { text:"التهاب الجيوب الأنفية", type:"otorrino" },
+            { text:"التهاب الحنجرة", type:"otorrino" },
+            { text:"حب الشباب", type:"dermatologo" },
+            { text:"التهاب الجلد", type:"dermatologo" },
+            { text:"الصدفية", type:"dermatologo" }
+        ],
+        quiz3: [
+            { text:"كسر في عظم بسبب سقوط أو ضربة أو حادث.", concept:"كسر" },
+            { text:"إصابة الأربطة التي تربط عظام المفصل، عادة بسبب التواء.", concept:"التواء" },
+            { text:"التهاب وتر بسبب مجهود زائد أو حركة خاطئة.", concept:"التهاب الوتر" },
+            { text:"خروج عظم عن وضعه الطبيعي في المفصل.", concept:"خلع" },
+            { text:"تآكل غضروف المفاصل، شائع مع التقدم في العمر.", concept:"خشونة المفاصل" },
+            { text:"أخصائي يعالج أمراض الجهاز الحركي.", concept:"أخصائي العظام" }
+        ],
+        quiz4: [
+            { text:"مرض قد يسبب نوبات تشنج وفقدان الوعي.", concept:"الصرع" },
+            { text:"مرض يسبب رعشة وصعوبة في الحركة.", concept:"باركنسون" },
+            { text:"صداع شديد جدًا.", concept:"الشقيقة" },
+            { text:"مرض يسبب فقدانًا تدريجيًا للذاكرة.", concept:"الزهايمر" },
+            { text:"طبيب متخصص في أمراض الجهاز العصبي.", concept:"طبيب أعصاب" },
+            { text:"وخز أو ألم شديد عندما ينضغط عصب أو يتضرر.", concept:"ألم عصبي" }
+        ]
+    },
+    en: {
+        clasif1: [
+            { text:"Eye", type:"oftalmologo" },
+            { text:"Nose", type:"otorrino" },
+            { text:"Ear", type:"otorrino" },
+            { text:"Throat", type:"otorrino" },
+            { text:"Skin", type:"dermatologo" }
+        ],
+        clasif2: [
+            { text:"Myopia", type:"oftalmologo" },
+            { text:"Conjunctivitis", type:"oftalmologo" },
+            { text:"Cataracts", type:"oftalmologo" },
+            { text:"Otitis", type:"otorrino" },
+            { text:"Sinusitis", type:"otorrino" },
+            { text:"Laryngitis", type:"otorrino" },
+            { text:"Acne", type:"dermatologo" },
+            { text:"Dermatitis", type:"dermatologo" },
+            { text:"Psoriasis", type:"dermatologo" }
+        ],
+        quiz3: [
+            { text:"A bone breaks due to a fall, a blow or an accident.", concept:"Fracture" },
+            { text:"Injury to the ligaments joining the bones of a joint, usually caused by a twist.", concept:"Sprain" },
+            { text:"Inflammation of a tendon due to overexertion or an awkward movement.", concept:"Tendinitis" },
+            { text:"A bone moves out of its normal position in a joint.", concept:"Dislocation" },
+            { text:"Wear of the cartilage in the joints, typical of old age.", concept:"Osteoarthritis" },
+            { text:"Specialist who treats diseases of the musculoskeletal system.", concept:"Traumatologist" }
+        ],
+        quiz4: [
+            { text:"A condition that can cause seizures and loss of consciousness.", concept:"Epilepsy" },
+            { text:"A condition that causes tremors and difficulty moving.", concept:"Parkinson's disease" },
+            { text:"Very intense headache.", concept:"Migraine" },
+            { text:"A condition that causes progressive memory loss.", concept:"Alzheimer's disease" },
+            { text:"Specialist doctor for diseases of the nervous system.", concept:"Neurologist" },
+            { text:"Tingling or intense pain when a nerve is compressed or damaged.", concept:"Neuralgia" }
+        ]
+    }
+};
+
+/* ====================================================
+   i18n TEXTOS DE INTERFAZ
+===================================================== */
+const i18n = {
+    es: {
+        startTitle: 'Médicos especialistas y enfermedades',
+        startSubtitle: 'Descubre qué médico trata cada enfermedad',
+        startAdvice: 'Descubre qué <span class="highlight-keyword">especialista</span> trata cada <span class="highlight-keyword">enfermedad</span> y qué lesiones afectan a nuestro cuerpo.<br><strong style="display:block;margin-top:.5rem;text-align:center;">¡Ánimo!</strong>',
+        startBtn: 'Comenzar',
+        hofTitle: 'Mejores puntuaciones',
+        hofPos: 'Posición', hofName: 'Nombre', hofPoints: 'Puntos', hofTime: 'Tiempo',
+        summaryTitle: 'Médicos y enfermedades',
+        summaryIntro: 'Toca cada bloque para ver la información',
+        accTitle1: 'Médicos y enfermedades de los sentidos',
+        accBody1: '<p>Los médicos y especialistas que cuidan los órganos de nuestros sentidos son:</p><ul><li><strong>Oftalmólogo:</strong> ojo.</li><li><strong>Otorrinolaringólogo:</strong> oído, nariz y garganta.</li><li><strong>Dermatólogo:</strong> piel.</li></ul><p>Algunas de las principales enfermedades que tratan estos especialistas son:</p><ul><li><strong>Oftalmólogo:</strong> miopía, conjuntivitis y cataratas.</li><li><strong>Otorrinolaringólogo:</strong> otitis, sinusitis y laringitis.</li><li><strong>Dermatólogo:</strong> acné, dermatitis y psoriasis.</li></ul><p class="acc-note"><em>Nota:</em> Al oftalmólogo también se le llama oculista. No debe confundirse con el óptico-optometrista, que adapta gafas y lentes de contacto.</p>',
+        accTitle2: 'Lesiones del aparato locomotor',
+        accBody2: '<p>Principales lesiones del aparato locomotor:</p><ul><li><strong>Fractura:</strong> rotura de un hueso por una caída, un golpe o un accidente.</li><li><strong>Esguince:</strong> lesión de los ligamentos que unen los huesos de una articulación, normalmente por una torcedura.</li><li><strong>Tendinitis:</strong> inflamación de un tendón debido a un sobreesfuerzo o un mal movimiento.</li><li><strong>Luxación:</strong> un hueso se sale de su posición normal en una articulación.</li><li><strong>Artrosis:</strong> desgaste del cartílago de las articulaciones, propio de la edad.</li></ul><p>El médico especialista que trata las enfermedades y lesiones del aparato locomotor es el <strong>traumatólogo</strong>.</p>',
+        accTitle3: 'Enfermedades del sistema nervioso',
+        accBody3: '<p>Principales enfermedades del sistema nervioso:</p><ul><li><strong>Epilepsia:</strong> enfermedad que puede provocar convulsiones y pérdida de conocimiento.</li><li><strong>Párkinson:</strong> enfermedad que provoca temblores y dificultad para moverse.</li><li><strong>Migraña:</strong> dolor de cabeza muy intenso.</li><li><strong>Alzhéimer:</strong> enfermedad que provoca la pérdida progresiva de la memoria.</li><li><strong>Neuralgia:</strong> hormigueo o dolor intenso cuando un nervio se comprime o se daña.</li></ul><p>El médico especialista que trata las enfermedades del sistema nervioso es el <strong>neurólogo</strong>.</p>',
+        startGameBtn: 'Comenzar juego',
+        game1Title: 'Clasifica los órganos según su especialista',
+        game2Title: '¿Qué especialista trata las siguientes enfermedades?',
+        game3Title: 'Principales lesiones del aparato locomotor',
+        game4Title: 'Enfermedades del sistema nervioso',
+        boxOftalmologoTitle: 'Oftalmólogo', boxOtorrinoTitle: 'Otorrinolaringólogo', boxDermatologoTitle: 'Dermatólogo',
+        checkBtn: 'Comprobar', continueBtn: 'Continuar',
+        finalTitle: 'Médicos y enfermedades',
+        scoreLabel: 'Puntuación:',
+        timeLabel: 'Tiempo:',
+        backBtn: 'Volver al menú',
+        modalTitle: '¡Juego Terminado!',
+        modalTimeLabel: 'Tu tiempo:',
+        modalSave: 'Guardar',
+        modalCancel: 'Cancelar',
+        namePlaceholder: 'Nombre',
+        surnamePlaceholder: 'Apellido',
+        msgPerfect: '¡Estu...pendo! ¡Puntuación perfecta!',
+        msg80: 'Casi lo logras. ¡Sigue practicando!',
+        msg50: 'Esto no está listo; aún puedes hacerlo mejor',
+        msg0: 'Vaya desastre... ¿Seguro que has estudiado?'
+    },
+    ar: {
+        startTitle: 'الأطباء المتخصصون والأمراض',
+        startSubtitle: 'اكتشف أي طبيب يعالج كل مرض',
+        startAdvice: 'اكتشف أي <span class="highlight-keyword">أخصائي</span> يعالج كل <span class="highlight-keyword">مرض</span> وما هي الإصابات التي تؤثر على جسمنا.<br><strong style="display:block;margin-top:.5rem;text-align:center;">بالتوفيق!</strong>',
+        startBtn: 'ابدأ',
+        hofTitle: 'أفضل النتائج',
+        hofPos: 'الترتيب', hofName: 'الاسم', hofPoints: 'النقاط', hofTime: 'الوقت',
+        summaryTitle: 'الأطباء والأمراض',
+        summaryIntro: 'اضغط على كل بلوك لرؤية المعلومات',
+        accTitle1: 'أطباء وأمراض الحواس',
+        accBody1: '<p>الأطباء والأخصائيون الذين يعتنون بأعضاء حواسنا هم:</p><ul><li><strong>طبيب العيون:</strong> العين.</li><li><strong>أخصائي الأنف والأذن والحنجرة:</strong> الأذن والأنف والحلق.</li><li><strong>طبيب الجلدية:</strong> الجلد.</li></ul><p>من أبرز الأمراض التي يعالجها هؤلاء الأخصائيون:</p><ul><li><strong>طبيب العيون:</strong> قصر النظر والتهاب الملتحمة وإعتام عدسة العين.</li><li><strong>أخصائي الأنف والأذن والحنجرة:</strong> التهاب الأذن والجيوب الأنفية والحنجرة.</li><li><strong>طبيب الجلدية:</strong> حب الشباب والتهاب الجلد والصدفية.</li></ul><p class="acc-note"><em>ملاحظة:</em> يُطلق على طبيب العيون أيضًا اسم أخصائي البصريات الطبي. لا يجب الخلط بينه وبين أخصائي البصريات (النظارات والعدسات اللاصقة).</p>',
+        accTitle2: 'إصابات الجهاز الحركي',
+        accBody2: '<p>أبرز إصابات الجهاز الحركي:</p><ul><li><strong>كسر:</strong> كسر في عظم بسبب سقوط أو ضربة أو حادث.</li><li><strong>التواء:</strong> إصابة الأربطة التي تربط عظام المفصل، عادة بسبب التواء.</li><li><strong>التهاب الوتر:</strong> التهاب وتر بسبب مجهود زائد أو حركة خاطئة.</li><li><strong>خلع:</strong> خروج عظم عن وضعه الطبيعي في المفصل.</li><li><strong>خشونة المفاصل:</strong> تآكل غضروف المفاصل، شائع مع التقدم في العمر.</li></ul><p>الطبيب المتخصص الذي يعالج أمراض وإصابات الجهاز الحركي هو <strong>أخصائي العظام</strong>.</p>',
+        accTitle3: 'أمراض الجهاز العصبي',
+        accBody3: '<p>أبرز أمراض الجهاز العصبي:</p><ul><li><strong>الصرع:</strong> مرض قد يسبب نوبات تشنج وفقدان الوعي.</li><li><strong>باركنسون:</strong> مرض يسبب رعشة وصعوبة في الحركة.</li><li><strong>الشقيقة:</strong> صداع شديد جدًا.</li><li><strong>الزهايمر:</strong> مرض يسبب فقدانًا تدريجيًا للذاكرة.</li><li><strong>ألم عصبي:</strong> وخز أو ألم شديد عندما ينضغط عصب أو يتضرر.</li></ul><p>الطبيب المتخصص الذي يعالج أمراض الجهاز العصبي هو <strong>طبيب الأعصاب</strong>.</p>',
+        startGameBtn: 'ابدأ اللعبة',
+        game1Title: 'صنّف الأعضاء حسب الأخصائي',
+        game2Title: 'أي أخصائي يعالج الأمراض التالية؟',
+        game3Title: 'أبرز إصابات الجهاز الحركي',
+        game4Title: 'أمراض الجهاز العصبي',
+        boxOftalmologoTitle: 'طبيب العيون', boxOtorrinoTitle: 'أخصائي الأنف والأذن والحنجرة', boxDermatologoTitle: 'طبيب الجلدية',
+        checkBtn: 'تحقق', continueBtn: 'متابعة',
+        finalTitle: 'الأطباء والأمراض',
+        scoreLabel: 'النتيجة:',
+        timeLabel: 'الوقت:',
+        backBtn: 'العودة إلى القائمة',
+        modalTitle: 'انتهت اللعبة!',
+        modalTimeLabel: 'وقتك:',
+        modalSave: 'حفظ',
+        modalCancel: 'إلغاء',
+        namePlaceholder: 'الاسم',
+        surnamePlaceholder: 'اللقب',
+        msgPerfect: 'رائع! نتيجة كاملة!',
+        msg80: 'اقتربت من النجاح. واصل التدريب!',
+        msg50: 'ليس جاهزًا بعد، ما زلت تستطيع تحسين نتيجتك',
+        msg0: 'يا للكارثة... هل درست فعلاً؟'
+    },
+    en: {
+        startTitle: 'Medical specialists and diseases',
+        startSubtitle: 'Find out which doctor treats each disease',
+        startAdvice: 'Find out which <span class="highlight-keyword">specialist</span> treats each <span class="highlight-keyword">disease</span> and which injuries affect our body.<br><strong style="display:block;margin-top:.5rem;text-align:center;">Good luck!</strong>',
+        startBtn: 'Start',
+        hofTitle: 'Best scores',
+        hofPos: 'Position', hofName: 'Name', hofPoints: 'Points', hofTime: 'Time',
+        summaryTitle: 'Doctors and diseases',
+        summaryIntro: 'Tap each block to see the information',
+        accTitle1: 'Doctors and diseases of the senses',
+        accBody1: '<p>The doctors and specialists who look after our sense organs are:</p><ul><li><strong>Ophthalmologist:</strong> eye.</li><li><strong>ENT specialist:</strong> ear, nose and throat.</li><li><strong>Dermatologist:</strong> skin.</li></ul><p>Some of the main conditions treated by these specialists are:</p><ul><li><strong>Ophthalmologist:</strong> short-sightedness, conjunctivitis and cataracts.</li><li><strong>ENT specialist:</strong> otitis, sinusitis and laryngitis.</li><li><strong>Dermatologist:</strong> acne, dermatitis and psoriasis.</li></ul><p class="acc-note"><em>Note:</em> An ophthalmologist is also called an oculist. This should not be confused with an optician-optometrist, who fits glasses and contact lenses.</p>',
+        accTitle2: 'Musculoskeletal system injuries',
+        accBody2: '<p>Main injuries of the musculoskeletal system:</p><ul><li><strong>Fracture:</strong> a bone breaks due to a fall, a blow or an accident.</li><li><strong>Sprain:</strong> injury to the ligaments joining the bones of a joint, usually caused by a twist.</li><li><strong>Tendinitis:</strong> inflammation of a tendon due to overexertion or an awkward movement.</li><li><strong>Dislocation:</strong> a bone moves out of its normal position in a joint.</li><li><strong>Osteoarthritis:</strong> wear of the cartilage in the joints, typical of old age.</li></ul><p>The specialist doctor who treats diseases and injuries of the musculoskeletal system is the <strong>traumatologist</strong>.</p>',
+        accTitle3: 'Nervous system diseases',
+        accBody3: "<p>Main diseases of the nervous system:</p><ul><li><strong>Epilepsy:</strong> a condition that can cause seizures and loss of consciousness.</li><li><strong>Parkinson's disease:</strong> a condition that causes tremors and difficulty moving.</li><li><strong>Migraine:</strong> a very intense headache.</li><li><strong>Alzheimer's disease:</strong> a condition that causes progressive memory loss.</li><li><strong>Neuralgia:</strong> tingling or intense pain when a nerve is compressed or damaged.</li></ul><p>The specialist doctor who treats diseases of the nervous system is the <strong>neurologist</strong>.</p>",
+        startGameBtn: 'Start game',
+        game1Title: 'Classify the organs by specialist',
+        game2Title: 'Which specialist treats the following diseases?',
+        game3Title: 'Main injuries of the musculoskeletal system',
+        game4Title: 'Diseases of the nervous system',
+        boxOftalmologoTitle: 'Ophthalmologist', boxOtorrinoTitle: 'ENT specialist', boxDermatologoTitle: 'Dermatologist',
+        checkBtn: 'Check', continueBtn: 'Continue',
+        finalTitle: 'Doctors and diseases',
+        scoreLabel: 'Score:',
+        timeLabel: 'Time:',
+        backBtn: 'Back to menu',
+        modalTitle: 'Game Over!',
+        modalTimeLabel: 'Your time:',
+        modalSave: 'Save',
+        modalCancel: 'Cancel',
+        namePlaceholder: 'Name',
+        surnamePlaceholder: 'Surname',
+        msgPerfect: 'Fan-tas-tic! Perfect score!',
+        msg80: 'Almost there. Keep practising!',
+        msg50: 'Not quite ready; you can still do better',
+        msg0: 'What a disaster... Did you really study?'
+    }
+};
+
+/* ====================================================
+   SONIDOS
+===================================================== */
+const audioUrls = {
+    correct: 'https://raw.githubusercontent.com/ManuelVS8/Efectos_audio/refs/heads/main/Correcto.mp3',
+    error: 'https://raw.githubusercontent.com/ManuelVS8/Efectos_audio/refs/heads/main/Error.mp3',
+    tap: 'https://raw.githubusercontent.com/ManuelVS8/Efectos_audio/refs/heads/main/Tap.mp3',
+    victory: 'https://raw.githubusercontent.com/ManuelVS8/Efectos_audio/refs/heads/main/Termin%C3%A9.mp3',
+    completed: 'https://raw.githubusercontent.com/ManuelVS8/Efectos_audio/refs/heads/main/Completado.mp3'
+};
+const audioObjects = {};
+Object.keys(audioUrls).forEach(key => {
+    const a = new Audio();
+    a.src = audioUrls[key];
+    a.preload = 'auto';
+    audioObjects[key] = a;
+});
+
+function playSoundClone(key) {
+    if (!soundEnabled || isMuted) return;
+    const base = audioObjects[key];
+    if (!base) return;
+    try {
+        const clone = base.cloneNode(true);
+        clone.play().catch(() => {});
+    } catch (e) {
+        try { base.currentTime = 0; base.play(); } catch (e2) {}
+    }
+}
+function reproducirSonidoCorrecto() { playSoundClone('correct'); }
+function reproducirSonidoError() { playSoundClone('error'); }
+function reproducirSonidoVictoria() { playSoundClone('victory'); }
+function reproducirSonidoCompletado() { playSoundClone('completed'); }
+function reproducirSonidoTap() { playSoundClone('tap'); }
+
+/* ====================================================
+   DESBLOQUEO DE AUDIO Y VOZ (Chromebooks compatibles)
+===================================================== */
+function unlockAudioContext() {
+    try {
+        const ctx = new (window.AudioContext || window.webkitAudioContext)();
+        if (ctx.state === 'suspended') { ctx.resume(); }
+        const buffer = ctx.createBuffer(1, 1, 22050);
+        const source = ctx.createBufferSource();
+        source.buffer = buffer;
+        source.connect(ctx.destination);
+        source.start();
+        audioCtxRef = ctx;
+    } catch (e) {}
+}
+
+let ttsForced = false;
+function forceInitTTS() {
+    if (ttsForced) return;
+    if (!window.speechSynthesis) return;
+    if (window.speechSynthesis.getVoices().length > 0) { ttsForced = true; return; }
+    const u = new SpeechSynthesisUtterance('');
+    u.volume = 0;
+    window.speechSynthesis.speak(u);
+    ttsForced = true;
+}
+if (window.speechSynthesis) {
+    window.speechSynthesis.onvoiceschanged = function () { ttsForced = true; };
+}
+
+function getBestVoice(lang) {
+    const voices = window.speechSynthesis.getVoices();
+    if (lang === 'es') {
+        let v = voices.find(voice => voice.name === 'Google español');
+        if (v) return v;
+        v = voices.find(voice => voice.lang.startsWith('es') && (voice.name.includes('Microsoft') || voice.name.includes('Natural')));
+        if (v) return v;
+        v = voices.find(voice => voice.lang === 'es-ES' || voice.lang.startsWith('es'));
+        if (v) return v;
+        return null;
+    } else if (lang === 'ar') {
+        let v = voices.find(voice => voice.lang.startsWith('ar') && (voice.name.includes('Google') || voice.name.includes('Microsoft') || voice.name.includes('Natural')));
+        if (v) return v;
+        v = voices.find(voice => voice.lang === 'ar-SA' || voice.lang.startsWith('ar'));
+        if (v) return v;
+        return null;
+    } else {
+        let v = voices.find(voice => voice.name.includes('Google') && voice.lang.startsWith('en'));
+        if (v) return v;
+        v = voices.find(voice => voice.lang.startsWith('en') && (voice.name.includes('Microsoft') || voice.name.includes('Natural')));
+        if (v) return v;
+        v = voices.find(voice => voice.lang === 'en-GB' || voice.lang.startsWith('en'));
+        if (v) return v;
+        return null;
+    }
+}
+
+function speakText(text, lang) {
+    if (!window.speechSynthesis) return;
+    window.speechSynthesis.cancel();
+    const u = new SpeechSynthesisUtterance(text);
+    u.lang = lang === 'en' ? 'en-GB' : (lang === 'ar' ? 'ar-SA' : 'es-ES');
+    const voice = getBestVoice(lang === 'en' ? 'en' : (lang === 'ar' ? 'ar' : 'es'));
+    if (voice) u.voice = voice;
+    u.rate = 0.85;
+    window.speechSynthesis.speak(u);
+}
+
+/* ====================================================
+   IDIOMA
+===================================================== */
+function applyLanguage(lang) {
+    currentLang = lang;
+    document.documentElement.lang = lang;
+    const t = i18n[lang];
+
+    document.getElementById('btnLangEs').classList.toggle('active-lang', lang === 'es');
+    document.getElementById('btnLangEn').classList.toggle('active-lang', lang === 'en');
+    document.getElementById('btnLangAr').classList.toggle('active-lang', lang === 'ar');
+    document.body.classList.toggle('rtl-active', lang === 'ar');
+
+    document.getElementById('startTitle').textContent = t.startTitle;
+    document.getElementById('startSubtitle').textContent = t.startSubtitle;
+    document.getElementById('startAdvice').innerHTML = t.startAdvice;
+    document.getElementById('playBtn').textContent = t.startBtn;
+    document.title = t.startTitle;
+
+    document.getElementById('hofTitle').textContent = t.hofTitle;
+    document.getElementById('hofPos').textContent = t.hofPos;
+    document.getElementById('hofName').textContent = t.hofName;
+    document.getElementById('hofPoints').textContent = t.hofPoints;
+    document.getElementById('hofTime').textContent = t.hofTime;
+
+    document.getElementById('summaryTitle').textContent = t.summaryTitle;
+    document.getElementById('summaryIntro').textContent = t.summaryIntro;
+    document.getElementById('accTitle1').textContent = t.accTitle1;
+    document.getElementById('accBody1').innerHTML = t.accBody1;
+    document.getElementById('accTitle2').textContent = t.accTitle2;
+    document.getElementById('accBody2').innerHTML = t.accBody2;
+    document.getElementById('accTitle3').textContent = t.accTitle3;
+    document.getElementById('accBody3').innerHTML = t.accBody3;
+    document.getElementById('startGameBtn').textContent = t.startGameBtn;
+
+    document.getElementById('game1Title').textContent = t.game1Title;
+    document.getElementById('game2Title').textContent = t.game2Title;
+    document.getElementById('game3Title').textContent = t.game3Title;
+    document.getElementById('game4Title').textContent = t.game4Title;
+    document.getElementById('boxOftalmologoTitle1').textContent = t.boxOftalmologoTitle;
+    document.getElementById('boxOtorrinoTitle1').textContent = t.boxOtorrinoTitle;
+    document.getElementById('boxDermatologoTitle1').textContent = t.boxDermatologoTitle;
+    document.getElementById('boxOftalmologoTitle2').textContent = t.boxOftalmologoTitle;
+    document.getElementById('boxOtorrinoTitle2').textContent = t.boxOtorrinoTitle;
+    document.getElementById('boxDermatologoTitle2').textContent = t.boxDermatologoTitle;
+    document.getElementById('checkBtnGame1').textContent = t.checkBtn;
+    document.getElementById('continueBtnGame1').textContent = t.continueBtn;
+    document.getElementById('checkBtnGame2').textContent = t.checkBtn;
+    document.getElementById('continueBtnGame2').textContent = t.continueBtn;
+
+    document.getElementById('finalTitle').textContent = t.finalTitle;
+    document.getElementById('scoreLabel').textContent = t.scoreLabel;
+    document.getElementById('finalTimeLabel').innerHTML = t.timeLabel + ' <span id="finalTime">' + (document.getElementById('finalTime') ? document.getElementById('finalTime').textContent : '00:00.0') + '</span>';
+    document.getElementById('backToMenuBtn').textContent = t.backBtn;
+
+    document.getElementById('modalTitle').textContent = t.modalTitle;
+    document.getElementById('modalTimeLabel').innerHTML = t.modalTimeLabel + ' <span id="modalTime">' + (document.getElementById('modalTime') ? document.getElementById('modalTime').textContent : '00:00.0') + '</span>';
+    document.getElementById('submitScoreBtn').textContent = t.modalSave;
+    document.getElementById('discardScoreBtn').textContent = t.modalCancel;
+    document.getElementById('playerName').placeholder = t.namePlaceholder;
+    document.getElementById('playerSurname').placeholder = t.surnamePlaceholder;
+
+    // Elementos dinámicos activos según el juego en curso
+    if (activeGame === 'game1' || activeGame === 'game2') {
+        const n = parseInt(activeGame.replace('game', ''));
+        const cfg = classConfig[n];
+        document.querySelectorAll(cfg.screenSel + ' [data-orig-index]').forEach(el => {
+            const idx = parseInt(el.getAttribute('data-orig-index'));
+            if (gameDataI18n[lang][cfg.dataKey][idx]) {
+                el.textContent = gameDataI18n[lang][cfg.dataKey][idx].text;
+            }
+        });
+    } else if (activeGame === 'game3' || activeGame === 'game4') {
+        const n = parseInt(activeGame.replace('game', ''));
+        const cfg = quizConfig[n];
+        const cardEl = document.getElementById(cfg.cardId);
+        const idx = parseInt(cardEl.getAttribute('data-orig-index'));
+        if (!isNaN(idx) && gameDataI18n[lang][cfg.dataKey][idx]) {
+            const newText = gameDataI18n[lang][cfg.dataKey][idx].text;
+            cardEl.querySelector('.quiz-text').textContent = newText;
+            window.speechSynthesis.cancel();
+            speakText(newText, lang);
+        }
+        document.querySelectorAll('#' + cfg.buttonsId + ' [data-orig-index]').forEach(btn => {
+            const bIdx = parseInt(btn.getAttribute('data-orig-index'));
+            if (gameDataI18n[lang][cfg.dataKey][bIdx]) {
+                btn.textContent = gameDataI18n[lang][cfg.dataKey][bIdx].concept;
+            }
+        });
+    }
+}
+
+document.getElementById('btnLangEs').onclick = () => { reproducirSonidoTap(); applyLanguage('es'); };
+document.getElementById('btnLangEn').onclick = () => { reproducirSonidoTap(); applyLanguage('en'); };
+document.getElementById('btnLangAr').onclick = () => { reproducirSonidoTap(); applyLanguage('ar'); };
+
+/* ====================================================
+   SONIDO ON/OFF
+===================================================== */
+const svgSoundOn = '<polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"></polygon><path d="M15.54 8.46a5 5 0 0 1 0 7.07"></path><path d="M19.07 4.93a10 10 0 0 1 0 14.14"></path>';
+const svgSoundOff = '<polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"></polygon><line x1="23" y1="9" x2="17" y2="15"></line><line x1="17" y1="9" x2="23" y2="15"></line>';
+
+function toggleSound() {
+    const muteBtn = document.getElementById('muteBtn');
+    const svg = document.getElementById('muteSvg');
+    if (isMuted) {
+        isMuted = false; soundEnabled = true;
+        svg.innerHTML = svgSoundOn;
+        muteBtn.classList.remove('muted');
+        reproducirSonidoTap();
+    } else {
+        isMuted = true; soundEnabled = false;
+        svg.innerHTML = svgSoundOff;
+        muteBtn.classList.add('muted');
+    }
+}
+
+/* ====================================================
+   ACORDEÓN
+===================================================== */
+function toggleAccordion(id) {
+    document.getElementById(id).classList.toggle('open');
+    reproducirSonidoTap();
+}
+
+/* ====================================================
+   PANTALLAS
+===================================================== */
+function showScreen(id) {
+    document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+    document.getElementById(id).classList.add('active');
+}
+
+/* ====================================================
+   TEMPORIZADOR
+===================================================== */
+function startGlobalTimer() {
+    if (timerInterval) return;
+    startTime = Date.now();
+    elapsed = 0;
+    timerStopped = false;
+    timerInterval = setInterval(() => {
+        const delta = (Date.now() - startTime) / 1000;
+        elapsed = delta;
+        updateTimerDisplay(elapsed);
+    }, 100);
+}
+
+function stopTimer() {
+    if (timerInterval) {
+        clearInterval(timerInterval);
+        timerInterval = null;
+        timerStopped = true;
+    }
+}
+
+function updateTimerDisplay(sec) {
+    const txt = formatTime(sec);
+    ['timerDisplay1', 'timerDisplay2', 'timerDisplay3', 'timerDisplay4'].forEach(id => {
+        document.getElementById(id).textContent = txt;
+    });
+}
+
+function formatTime(sec) {
+    const m = Math.floor(sec / 60).toString().padStart(2, '0');
+    const s = Math.floor(sec % 60).toString().padStart(2, '0');
+    const ms = Math.round((sec % 1) * 10);
+    return `${m}:${s}.${ms}`;
+}
+
+function updateGlobalProgress() {
+    const pct = Math.min(100, (totalCorrectGlobal / TOTAL_ITEMS_GLOBAL) * 100);
+    ['progressFill1', 'progressFill2', 'progressFill3', 'progressFill4'].forEach(id => {
+        document.getElementById(id).style.width = pct + '%';
+    });
+}
+
+function shuffle(array) {
+    let currentIndex = array.length, randomIndex;
+    while (currentIndex != 0) {
+        randomIndex = Math.floor(Math.random() * currentIndex);
+        currentIndex--;
+        [array[currentIndex], array[randomIndex]] = [array[randomIndex], array[currentIndex]];
+    }
+    return array;
+}
+
+/* ====================================================
+   PUNTUACIÓN FINAL
+===================================================== */
+function calcularPuntuacionFinal() {
+    const score = 100 - ((totalAttempts - MIN_ATTEMPTS) * (100 / MIN_ATTEMPTS));
+    return Math.max(0, Math.round(score));
+}
+
+/* ====================================================
+   JUEGOS 1-2: CLASIFICAR EN CAJAS (tap-tap + drag&drop)
+===================================================== */
+const classConfig = {
+    1: { screenSel:'#game1Screen', bankId:'g1Bank', dataKey:'clasif1', total:5, checkBtnId:'checkBtnGame1', continueBtnId:'continueBtnGame1' },
+    2: { screenSel:'#game2Screen', bankId:'g2Bank', dataKey:'clasif2', total:9, checkBtnId:'checkBtnGame2', continueBtnId:'continueBtnGame2' }
+};
+const classState = {
+    1: { selected:null, locked:false, correct:0 },
+    2: { selected:null, locked:false, correct:0 }
+};
+
+function initClassGame(n) {
+    activeGame = 'game' + n;
+    const cfg = classConfig[n];
+    const st = classState[n];
+    st.locked = false;
+    st.selected = null;
+    st.correct = 0;
+    document.getElementById(cfg.checkBtnId).style.display = 'inline-flex';
+    document.getElementById(cfg.continueBtnId).classList.remove('show');
+    document.querySelectorAll(cfg.screenSel + ' .sort-box').forEach(b => b.classList.remove('disabled'));
+    document.querySelectorAll(cfg.screenSel + ' .sort-content').forEach(c => c.innerHTML = '');
+
+    const bank = document.getElementById(cfg.bankId);
+    bank.innerHTML = '';
+    const order = shuffle(Array.from({ length: cfg.total }, (_, i) => i));
+    order.forEach(idx => {
+        const item = gameDataI18n[currentLang][cfg.dataKey][idx];
+        bank.appendChild(createClassCard(n, item, idx));
+    });
+}
+
+function createClassCard(n, item, origIdx) {
+    const el = document.createElement('div');
+    el.className = 'draggable-item';
+    el.textContent = item.text;
+    el.dataset.type = item.type;
+    el.dataset.game = n;
+    el.setAttribute('data-orig-index', origIdx);
+    el.draggable = true;
+    el.addEventListener('click', () => selectClassItem(n, el, false));
+    el.addEventListener('dragstart', e => {
+        e.dataTransfer.setData('text/plain', n + ':' + origIdx);
+        e.dataTransfer.effectAllowed = 'move';
+        selectClassItem(n, el, true);
+    });
+    return el;
+}
+
+function selectClassItem(n, el, fromDrag) {
+    const st = classState[n];
+    if (st.locked) return;
+    if (st.selected === el) { el.classList.remove('selected'); st.selected = null; return; }
+    if (st.selected) st.selected.classList.remove('selected');
+    st.selected = el;
+    el.classList.add('selected');
+    if (!fromDrag) reproducirSonidoTap();
+}
+
+// Al pulsar un elemento ya colocado en una categoría, vuelve al banco
+document.addEventListener('click', e => {
+    [1, 2].forEach(n => {
+        const cfg = classConfig[n];
+        const st = classState[n];
+        if (activeGame !== 'game' + n || st.locked) return;
+        const item = e.target.closest(cfg.screenSel + ' .sort-content .draggable-item');
+        if (item && !item.classList.contains('correct') && !item.classList.contains('wrong')) {
+            document.getElementById(cfg.bankId).appendChild(item);
+            item.classList.remove('selected');
+            if (st.selected === item) st.selected = null;
+            reproducirSonidoTap();
+        }
+    });
+});
+
+[1, 2].forEach(n => {
+    const cfg = classConfig[n];
+    document.querySelectorAll(cfg.screenSel + ' .sort-box').forEach(box => {
+        const content = box.querySelector('.sort-content');
+
+        box.addEventListener('click', () => {
+            const st = classState[n];
+            if (activeGame !== 'game' + n || st.locked) return;
+            if (st.selected && st.selected.parentElement !== content) {
+                content.appendChild(st.selected);
+                st.selected.classList.remove('selected');
+                st.selected = null;
+                reproducirSonidoTap();
+            }
+        });
+
+        box.addEventListener('dragover', e => { e.preventDefault(); e.dataTransfer.dropEffect = 'move'; });
+        box.addEventListener('drop', e => {
+            e.preventDefault();
+            const st = classState[n];
+            if (activeGame !== 'game' + n || st.locked) return;
+            let card = st.selected;
+            if (!card) {
+                const data = e.dataTransfer.getData('text/plain');
+                const idx = data.split(':')[1];
+                card = document.querySelector(cfg.screenSel + ' [data-orig-index="' + idx + '"]');
+            }
+            if (card) {
+                content.appendChild(card);
+                card.classList.remove('selected');
+                st.selected = null;
+                reproducirSonidoTap();
+            }
+        });
+    });
+
+    const bankEl = document.getElementById(cfg.bankId);
+    bankEl.addEventListener('dragover', e => { e.preventDefault(); e.dataTransfer.dropEffect = 'move'; });
+    bankEl.addEventListener('drop', e => {
+        e.preventDefault();
+        const st = classState[n];
+        if (activeGame !== 'game' + n || st.locked) return;
+        let card = st.selected;
+        if (!card) {
+            const data = e.dataTransfer.getData('text/plain');
+            const idx = data.split(':')[1];
+            card = document.querySelector(cfg.screenSel + ' [data-orig-index="' + idx + '"]');
+        }
+        if (card) {
+            bankEl.appendChild(card);
+            card.classList.remove('selected');
+            st.selected = null;
+            reproducirSonidoTap();
+        }
+    });
+});
+
+function checkClassGame(n) {
+    const cfg = classConfig[n];
+    const st = classState[n];
+    if (activeGame !== 'game' + n || st.locked) return;
+
+    let correct = 0, errors = 0;
+    document.querySelectorAll(cfg.screenSel + ' .sort-box').forEach(box => {
+        const boxType = box.dataset.type;
+        box.querySelectorAll('.draggable-item').forEach(item => {
+            item.classList.remove('correct', 'wrong');
+            if (item.dataset.type === boxType) {
+                item.classList.add('correct');
+                correct++;
+            } else {
+                item.classList.add('wrong');
+                errors++;
+            }
+        });
+    });
+    document.querySelectorAll('#' + cfg.bankId + ' .draggable-item').forEach(item => {
+        item.classList.add('wrong');
+        errors++;
+    });
+
+    st.correct = correct;
+    st.locked = true;
+    window.speechSynthesis.cancel();
+    document.querySelectorAll(cfg.screenSel + ' .sort-box').forEach(b => b.classList.add('disabled'));
+    document.getElementById(cfg.checkBtnId).style.display = 'none';
+    document.getElementById(cfg.continueBtnId).classList.add('show');
+
+    totalAttempts += cfg.total + errors;
+    totalCorrectGlobal += correct;
+    updateGlobalProgress();
+
+    if (errors === 0) {
+        reproducirSonidoCompletado();
+    } else {
+        reproducirSonidoError();
+    }
+}
+
+document.getElementById('checkBtnGame1').onclick = () => checkClassGame(1);
+document.getElementById('checkBtnGame2').onclick = () => checkClassGame(2);
+document.getElementById('continueBtnGame1').onclick = () => {
+    reproducirSonidoTap();
+    initClassGame(2);
+    showScreen('game2Screen');
+};
+document.getElementById('continueBtnGame2').onclick = () => {
+    reproducirSonidoTap();
+    initQuizGame(3);
+    showScreen('game3Screen');
+};
+
+/* ====================================================
+   JUEGOS 3-4: TARJETA CON DEFINICIÓN + OPCIONES
+===================================================== */
+const quizConfig = {
+    3: { dataKey:'quiz3', total:6, cardId:'game3Card', buttonsId:'game3Buttons' },
+    4: { dataKey:'quiz4', total:6, cardId:'game4Card', buttonsId:'game4Buttons' }
+};
+const quizState = {
+    3: { order:[], currentIndex:0, locked:false },
+    4: { order:[], currentIndex:0, locked:false }
+};
+
+function initQuizGame(n) {
+    activeGame = 'game' + n;
+    const cfg = quizConfig[n];
+    const st = quizState[n];
+    st.currentIndex = 0;
+    st.locked = false;
+    st.order = shuffle(Array.from({ length: cfg.total }, (_, i) => i));
+    loadQuizQuestion(n);
+}
+
+function renderQuizButtons(n) {
+    const cfg = quizConfig[n];
+    const container = document.getElementById(cfg.buttonsId);
+    container.innerHTML = '';
+    const btnIndices = shuffle(Array.from({ length: cfg.total }, (_, i) => i));
+    btnIndices.forEach(origIdx => {
+        const item = gameDataI18n[currentLang][cfg.dataKey][origIdx];
+        const btn = document.createElement('div');
+        btn.className = 'tpl-card';
+        btn.textContent = item.concept;
+        btn.setAttribute('data-orig-index', origIdx);
+        btn.onclick = () => handleQuizClick(n, btn, origIdx);
+        container.appendChild(btn);
+    });
+}
+
+function loadQuizQuestion(n) {
+    const cfg = quizConfig[n];
+    const st = quizState[n];
+    st.locked = false;
+    const origIdx = st.order[st.currentIndex];
+    const text = gameDataI18n[currentLang][cfg.dataKey][origIdx].text;
+    const cardEl = document.getElementById(cfg.cardId);
+    cardEl.querySelector('.quiz-text').textContent = text;
+    cardEl.setAttribute('data-orig-index', origIdx);
+    cardEl.classList.remove('flash-error');
+    renderQuizButtons(n);
+    setTimeout(() => { speakText(text, currentLang); }, 300);
+}
+
+function handleQuizClick(n, btn, chosenIdx) {
+    const cfg = quizConfig[n];
+    const st = quizState[n];
+    if (activeGame !== 'game' + n || st.locked) return;
+    window.speechSynthesis.cancel();
+
+    const correctIdx = st.order[st.currentIndex];
+    if (chosenIdx === correctIdx) {
+        totalAttempts++;
+        reproducirSonidoCorrecto();
+        st.locked = true;
+        btn.classList.add('matched');
+        st.currentIndex++;
+        totalCorrectGlobal++;
+        updateGlobalProgress();
+        if (st.currentIndex < cfg.total) {
+            setTimeout(() => loadQuizQuestion(n), 800);
+        } else {
+            setTimeout(() => finishQuizGame(n), 800);
+        }
+    } else {
+        totalAttempts++;
+        reproducirSonidoError();
+        btn.classList.add('flash-error');
+        setTimeout(() => btn.classList.remove('flash-error'), 300);
+    }
+}
+
+function finishQuizGame(n) {
+    window.speechSynthesis.cancel();
+    activeGame = null;
+    if (n === 3) {
+        reproducirSonidoCompletado();
+        setTimeout(() => {
+            initQuizGame(4);
+            showScreen('game4Screen');
+        }, 1000);
+    } else if (n === 4) {
+        finishGame();
+    }
+}
+
+/* ====================================================
+   FINAL DEL JUEGO
+===================================================== */
+function finishGame() {
+    window.speechSynthesis.cancel();
+    activeGame = null;
+    stopTimer();
+    finalTimeVal = elapsed;
+    finalScoreVal = calcularPuntuacionFinal();
+    document.getElementById('finalScore').textContent = finalScoreVal;
+    document.getElementById('finalTime').textContent = formatTime(finalTimeVal);
+
+    const trophyBox = document.getElementById('trophyBox');
+    const msg = document.getElementById('finalMsg');
+    const t = i18n[currentLang];
+
+    if (finalScoreVal === 100) {
+        trophyBox.style.display = 'block';
+        msg.textContent = t.msgPerfect;
+        reproducirSonidoVictoria();
+        createConfetti();
+    } else if (finalScoreVal >= 80) {
+        trophyBox.style.display = 'none';
+        msg.textContent = t.msg80;
+        reproducirSonidoCompletado();
+    } else if (finalScoreVal >= 50) {
+        trophyBox.style.display = 'none';
+        msg.textContent = t.msg50;
+        reproducirSonidoCompletado();
+    } else {
+        trophyBox.style.display = 'none';
+        msg.textContent = t.msg0;
+        reproducirSonidoCompletado();
+    }
+
+    showScreen('finalScreen');
+    showSubmitModal(finalTimeVal, finalScoreVal);
+}
+
+function createConfetti() {
+    for (let i = 0; i < 100; i++) {
+        setTimeout(() => {
+            const c = document.createElement('div');
+            c.className = 'confetti';
+            const x = Math.random() * window.innerWidth;
+            const tx = (Math.random() - 0.5) * 200;
+            c.style.left = x + 'px'; c.style.top = '-10px';
+            c.style.backgroundColor = ['#ff595e', '#1982c4', '#6a4c93', '#ffca3a', '#8ac926'][Math.floor(Math.random() * 5)];
+            c.style.setProperty('--tx', tx + 'px');
+            c.style.setProperty('--ty', window.innerHeight + 20 + 'px');
+            document.body.appendChild(c);
+            setTimeout(() => c.remove(), 3000);
+        }, i * 20);
+    }
+}
+
+/* ====================================================
+   HALL OF FAME
+===================================================== */
+function loadHallOfFame() {
+    if (isHofLoading) return;
+    isHofLoading = true;
+    const tbody = document.getElementById('hofTableBody');
+    tbody.innerHTML = '<tr><td colspan="4" class="hall-of-fame-loading">Cargando datos...</td></tr>';
+    const url = `${APP_SCRIPT_URL}?action=read&sheet=${SHEET_NAME}`;
+    const timeoutId = setTimeout(() => {
+        if (isHofLoading) {
+            tbody.innerHTML = '<tr><td colspan="4" class="hall-of-fame-error">Error de conexión (Timeout).</td></tr>';
+            isHofLoading = false;
+        }
+    }, 8000);
+
+    fetch(url)
+        .then(r => { clearTimeout(timeoutId); if (!r.ok) throw new Error("Network response was not ok"); return r.json(); })
+        .then(data => {
+            if (data.status === 'success' && data.data) {
+                const processedData = data.data.map(row => {
+                    const getVal = keys => {
+                        for (let key of keys) {
+                            if (row[key] !== undefined && row[key] !== "") return row[key];
+                        }
+                        return null;
+                    };
+                    return {
+                        Nombre: getVal(["Nombre", "nombre", "name"]),
+                        Apellidos: getVal(["Apellidos", "apellidos", "surname"]),
+                        Puntuación: getVal(["Puntuación", "puntuación", "score"]),
+                        Tiempo: getVal(["Tiempo", "tiempo", "time"])
+                    };
+                });
+
+                const validData = processedData.filter(row => row.Puntuación !== null && !isNaN(parseFloat(row.Puntuación)));
+
+                if (validData.length === 0) {
+                    tbody.innerHTML = `<tr><td colspan="4" class="hall-of-fame-loading">${currentLang === 'es' ? '¡Sé el primero en guardar tu puntuación!' : (currentLang === 'ar' ? 'كن أول من يحفظ نتيجته!' : 'Be the first to save your score!')}</td></tr>`;
+                } else {
+                    validData.sort((a, b) => {
+                        const sA = parseFloat(a.Puntuación) || 0;
+                        const sB = parseFloat(b.Puntuación) || 0;
+                        if (sB !== sA) return sB - sA;
+                        return (parseFloat(a.Tiempo) || 9999) - (parseFloat(b.Tiempo) || 9999);
+                    });
+                    tbody.innerHTML = '';
+                    validData.slice(0, 10).forEach((item, i) => {
+                        const tr = document.createElement('tr');
+                        const displayName = `${item.Nombre || ''} ${item.Apellidos || ''}`.trim();
+                        let timeStr = item.Tiempo;
+                        if (!isNaN(parseFloat(item.Tiempo))) {
+                            timeStr = formatTime(parseFloat(item.Tiempo));
+                        }
+                        tr.innerHTML = `<td>${i + 1}º</td><td>${displayName}</td><td>${item.Puntuación || 0}</td><td>${timeStr}</td>`;
+                        tbody.appendChild(tr);
+                    });
+                }
+            } else {
+                tbody.innerHTML = '<tr><td colspan="4" class="hall-of-fame-error">Error de conexión.</td></tr>';
+            }
+        })
+        .catch(e => {
+            clearTimeout(timeoutId);
+            console.error("Error HoF:", e);
+            tbody.innerHTML = '<tr><td colspan="4" class="hall-of-fame-error">Error de conexión o timeout.</td></tr>';
+        })
+        .finally(() => { isHofLoading = false; });
+}
+
+function showSubmitModal(time, score) {
+    const mt = document.getElementById('modalTime');
+    if (mt) mt.textContent = formatTime(time);
+    document.getElementById('playerName').value = '';
+    document.getElementById('playerSurname').value = '';
+    document.getElementById('submitModal').style.display = 'flex';
+    const btn = document.getElementById('submitScoreBtn');
+    btn.textContent = i18n[currentLang].modalSave;
+    btn.disabled = false;
+}
+
+function submitScore() {
+    const btn = document.getElementById('submitScoreBtn');
+    const name = document.getElementById('playerName').value.trim().substring(0, 15);
+    const surname = document.getElementById('playerSurname').value.trim().substring(0, 15);
+
+    if (!name || !surname) {
+        alert(currentLang === 'es' ? "Por favor, rellena nombre y apellido" : (currentLang === 'ar' ? "يرجى إدخال الاسم واللقب" : "Please fill in name and surname"));
+        return;
+    }
+
+    const payload = { score: finalScoreVal, time: finalTimeVal, name, surname };
+    const originalText = btn.textContent;
+    btn.textContent = "Enviando...";
+    btn.disabled = true;
+
+    function closeAfterSend() {
+        document.getElementById('submitModal').style.display = 'none';
+        btn.textContent = originalText;
+        btn.disabled = false;
+        setTimeout(loadHallOfFame, 1500);
+    }
+
+    fetch(APP_SCRIPT_URL, {
+        method: 'POST',
+        mode: 'no-cors',
+        headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+        body: JSON.stringify({ sheet: SHEET_NAME, action: 'write', data: payload })
+    })
+    .then(() => { setTimeout(closeAfterSend, 1000); })
+    .catch(() => { setTimeout(closeAfterSend, 1000); });
+}
+
+/* ====================================================
+   EVENTOS
+===================================================== */
+document.getElementById('playBtn').onclick = () => {
+    reproducirSonidoTap();
+    unlockAudioContext();
+    forceInitTTS();
+    showScreen('summaryScreen');
+};
+
+document.getElementById('startGameBtn').onclick = () => {
+    reproducirSonidoTap();
+    timerStopped = false;
+    elapsed = 0;
+    timerInterval = null;
+    totalAttempts = 0;
+    totalCorrectGlobal = 0;
+    updateGlobalProgress();
+    initClassGame(1);
+    showScreen('game1Screen');
+    startGlobalTimer();
+};
+
+document.getElementById('backToMenuBtn').onclick = () => {
+    reproducirSonidoTap();
+    location.reload();
+};
+
+document.getElementById('submitScoreBtn').onclick = () => {
+    reproducirSonidoTap();
+    submitScore();
+};
+
+document.getElementById('discardScoreBtn').onclick = () => {
+    reproducirSonidoTap();
+    document.getElementById('submitModal').style.display = 'none';
+};
+
+document.getElementById('playerSurname').addEventListener('keypress', e => {
+    if (e.key === 'Enter') document.getElementById('submitScoreBtn').click();
+});
+document.getElementById('playerName').addEventListener('keypress', e => {
+    if (e.key === 'Enter') document.getElementById('playerSurname').focus();
+});
+
+/* ====================================================
+   INIT
+===================================================== */
+document.addEventListener('DOMContentLoaded', () => {
+    loadHallOfFame();
+    applyLanguage('es');
+});
+</script>
+
+
+</body></html>

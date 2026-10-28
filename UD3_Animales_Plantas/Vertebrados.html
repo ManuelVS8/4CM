@@ -1,0 +1,1499 @@
+<!DOCTYPE html>
+<html lang="en" translate="no" class="notranslate">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" />
+    <meta name="google" content="notranslate">
+    <title>Grupo de los vertebrados</title>
+    <link rel="icon" type="image/x-icon" href="https://raw.githubusercontent.com/ManuelVS8/Audios-juegos-SCIENCE/refs/heads/main/icono.ico">
+    <style>
+        * { box-sizing: border-box; margin:0; padding:0; }
+        :root {
+            --blue:#001DFF;
+            --blue-dark:#04032B;
+            --blue-700:#1a3a5f;
+            --blue-600:#254fba;
+            --orange:#f59e42;
+            --orange-700:#e67e22;
+            --bg-grad-1:#1a3a5f;
+            --bg-grad-2:#0d2340;
+            --white:#ffffff;
+            --green:#2ecc71;
+            --red:#e74c3c;
+            --panel:#E8EAFF;
+        }
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, 'Noto Sans Arabic', sans-serif;
+            background: linear-gradient(135deg, var(--bg-grad-1) 0%, var(--bg-grad-2) 100%);
+            min-height:100vh; display:flex; justify-content:center; align-items:flex-start;
+            padding:20px 12px; color:#333;
+        }
+        .game-container {
+            background:var(--white); border-radius:16px; box-shadow:0 12px 24px rgba(0,0,0,.12);
+            padding:1.2rem; max-width:980px; width:100%; min-height:640px; position:relative; overflow:hidden;
+            display:flex; flex-direction:column; margin-bottom:2rem;
+        }
+        header { text-align:center; margin-bottom:.4rem; margin-top:3.2rem; }
+        h1 { color:var(--blue-dark); font-size:clamp(1.5rem,4.2vw,2.4rem); font-weight:900; letter-spacing:.5px; }
+        .subtitle { color:var(--blue-700); font-size:clamp(.95rem,3vw,1.15rem); margin-top:.25rem; }
+        .highlight-keyword { color:var(--orange); font-weight:800; }
+
+        /* Buttons */
+        .btn { color:#fff; border:none; padding:.75rem 1.2rem; border-radius:10px; cursor:pointer; font-weight:800;
+            transition:transform .08s ease, box-shadow .2s ease, background-color .25s ease; min-width:140px; height:48px;
+            display:inline-flex; align-items:center; justify-content:center; font-size:1rem; }
+        .btn:hover { transform:translateY(-2px); box-shadow:0 6px 14px rgba(0,0,0,.12); }
+        .btn:active { transform:translateY(0) scale(.97); }
+        .btn:disabled { opacity:.5; cursor:not-allowed; transform:none; }
+        .btn-primary { background:var(--orange); }
+        .btn-primary:hover { background:var(--orange-700); }
+        .btn-blue { background:var(--blue-600); }
+        .btn-blue:hover { filter:brightness(.9); }
+        .btn-ghost { background:#e6f2ff; color:var(--blue-700); }
+
+        .screen { display:none; animation:fadeIn .35s ease; flex-direction:column; flex:1; }
+        .screen.active { display:flex; }
+        @keyframes fadeIn { from{opacity:0;transform:translateY(12px);} to{opacity:1;transform:translateY(0);} }
+        .hidden { display:none !important; }
+
+        .game-info { display:flex; gap:.6rem; align-items:center; justify-content:space-between; margin:.3rem 0 .8rem; flex-wrap:wrap; }
+        .timer { font-weight:900; color:var(--blue-700); font-size:clamp(.95rem,2.3vw,1.15rem); }
+        .progress-bar { flex:1; height:10px; background:#e6f2ff; border-radius:999px; overflow:hidden; }
+        .progress-fill { height:100%; width:0%; background:linear-gradient(90deg, var(--orange) 0%, var(--orange-700) 100%); transition:width .3s ease; }
+
+        /* Top controls */
+        .top-controls { position:absolute; top:.8rem; right:1rem; display:flex; align-items:center; gap:8px; z-index:20; }
+        .lang-pill { display:flex; align-items:center; background:#fff; border-radius:999px; padding:3px; gap:3px;
+            box-shadow:0 2px 8px rgba(0,0,0,0.12); border:1px solid #e0e0e0; }
+        .lang-pill button { width:34px; height:34px; border-radius:50%; border:none; font-size:1.15rem; cursor:pointer;
+            display:flex; align-items:center; justify-content:center; background:transparent;
+            transition:background .2s, opacity .2s, transform .15s; }
+        .lang-pill button.active-lang { background:var(--blue-600); transform:scale(1.08); }
+        .lang-pill button:not(.active-lang) { opacity:.5; }
+        .lang-pill button:hover:not(.active-lang) { opacity:.8; transform:scale(1.05); }
+        .mute-btn { background:linear-gradient(135deg, var(--orange), var(--orange-700)); color:#fff; border:2px solid #fff;
+            width:38px; height:38px; border-radius:50%; cursor:pointer; display:flex; align-items:center; justify-content:center;
+            z-index:20; transition:transform .2s, box-shadow .2s; }
+        .mute-btn:hover { transform:scale(1.1); box-shadow:0 4px 12px rgba(245,158,66,.4); }
+        .mute-btn.muted { background:linear-gradient(135deg,#999,#777); }
+        .mute-btn svg { width:20px; height:20px; pointer-events:none; }
+
+        /* Pantalla Inicio */
+        .start-content { display:flex; flex-direction:column; justify-content:center; align-items:center; flex:1; gap:1rem; padding:1rem; }
+        .advice-box { background:var(--panel); border-left:4px solid var(--blue-700); padding:1rem 1.2rem; border-radius:12px;
+            color:var(--blue-700); max-width:760px; text-align:center; font-size:clamp(1rem,3vw,1.15rem); }
+        .start-image { max-width:300px; width:100%; margin:0 auto; }
+
+        @keyframes shakeAnim {
+            0%,100%{transform:translateX(0);}
+            20%{transform:translateX(-5px);}
+            40%{transform:translateX(5px);}
+            60%{transform:translateX(-5px);}
+            80%{transform:translateX(5px);}
+        }
+
+        /* Pantalla Resumen con Acordeón */
+        .summary-wrapper { display:flex; flex-direction:column; align-items:center; gap:1.2rem; flex:1; padding:1rem 0; }
+        .accordion-container { width:100%; max-width:850px; display:flex; flex-direction:column; gap:.8rem; }
+        .accordion-item { border-radius:14px; border:2px solid var(--blue-600); overflow:hidden; background:#fff; }
+        .accordion-item.color-mamiferos { border-color:#e57373; }
+        .accordion-item.color-mamiferos .accordion-header { background:#FBE3E3; color:#a83a3a; }
+        .accordion-item.color-mamiferos .accordion-header:hover { background:#f7d0d0; }
+        .accordion-item.color-aves { border-color:#e8c547; }
+        .accordion-item.color-aves .accordion-header { background:#FFF6D9; color:#8a6d00; }
+        .accordion-item.color-aves .accordion-header:hover { background:#fdecb0; }
+        .accordion-item.color-peces { border-color:#5b9bd5; }
+        .accordion-item.color-peces .accordion-header { background:#E1F0FB; color:#2c5f8a; }
+        .accordion-item.color-peces .accordion-header:hover { background:#c9e5f7; }
+        .accordion-item.color-reptiles { border-color:#6fbf73; }
+        .accordion-item.color-reptiles .accordion-header { background:#E5F7E6; color:#2d7a30; }
+        .accordion-item.color-reptiles .accordion-header:hover { background:#c9edcb; }
+        .accordion-item.color-anfibios { border-color:#b39ddb; }
+        .accordion-item.color-anfibios .accordion-header { background:#F0EAFB; color:#5e4a94; }
+        .accordion-item.color-anfibios .accordion-header:hover { background:#ddd0f5; }
+
+        /* Colores de letrero de grupo (reutilizan la paleta pastel del resumen) */
+        .group-label-mamiferos { background:#FBE3E3 !important; border-color:#e57373 !important; }
+        .group-label-mamiferos #game2WordText, .group-label-mamiferos#game1WordText { color:#a83a3a !important; }
+        .group-label-aves { background:#FFF6D9 !important; border-color:#e8c547 !important; }
+        .group-label-aves #game2WordText, .group-label-aves#game1WordText { color:#8a6d00 !important; }
+        .group-label-reptiles { background:#E5F7E6 !important; border-color:#6fbf73 !important; }
+        .group-label-reptiles #game2WordText, .group-label-reptiles#game1WordText { color:#2d7a30 !important; }
+        .group-label-peces { background:#E1F0FB !important; border-color:#5b9bd5 !important; }
+        .group-label-peces #game2WordText, .group-label-peces#game1WordText { color:#2c5f8a !important; }
+        .group-label-anfibios { background:#F0EAFB !important; border-color:#b39ddb !important; }
+        .group-label-anfibios #game2WordText, .group-label-anfibios#game1WordText { color:#5e4a94 !important; }
+        .accordion-header { background:var(--panel); color:var(--blue-600); font-weight:800; font-size:clamp(1rem,2.8vw,1.2rem);
+            padding:1rem 1.3rem; cursor:pointer; display:flex; align-items:center; justify-content:space-between;
+            transition:background .2s; user-select:none; }
+        .accordion-header:hover { background:#dbe4ff; }
+        .accordion-header .chevron { transition:transform .3s ease; font-size:1.1rem; }
+        .accordion-item.open .accordion-header .chevron { transform:rotate(180deg); }
+        .accordion-body { max-height:0; overflow:hidden; transition:max-height .35s ease; }
+        .accordion-item.open .accordion-body { max-height:600px; }
+        .accordion-body-inner { padding:1rem 1.3rem 1.3rem; }
+        .accordion-list { list-style:disc; padding-left:1.4rem; }
+        .accordion-list li { margin-bottom:.6rem; line-height:1.6; font-size:clamp(.88rem,2.2vw,1rem); color:var(--blue-dark); }
+        .accordion-list li:last-child { margin-bottom:0; }
+        .accordion-list li.unique-feature { font-weight:800; color:var(--orange-700); }
+        .keyword-summary { font-weight:900; }
+
+        /* Pantalla Juego 1: Grid con imágenes (multi-selección) */
+        .game1-wrapper { display:flex; flex-direction:column; align-items:center; gap:1rem; flex:1; padding:.3rem 0 1rem; width:100%; }
+        .word-display { display:flex; align-items:center; justify-content:center; gap:.8rem; }
+        .btn-play-word { width:44px; height:44px; border-radius:50%; background:var(--blue-600); border:2px solid #fff; color:#fff;
+            cursor:pointer; display:flex; align-items:center; justify-content:center; box-shadow:0 3px 8px rgba(37,79,186,.35);
+            transition:transform .15s, box-shadow .15s; flex-shrink:0; }
+        .btn-play-word:hover { transform:scale(1.12); }
+        .btn-play-word:active { transform:scale(.95); }
+        .btn-play-word svg { width:18px; height:18px; margin-left:2px; pointer-events:none; }
+        #game1WordText { font-size:clamp(1.2rem,3.5vw,1.7rem); font-weight:900; color:var(--blue-dark); background:var(--panel);
+            padding:.5rem 1.3rem; border-radius:14px; box-shadow:0 3px 8px rgba(0,0,0,.08); min-width:150px; text-align:center; }
+        .animal-grid { display:grid; grid-template-columns:repeat(5, 1fr); grid-template-rows:repeat(3, 1fr); gap:10px;
+            width:100%; max-width:820px; margin:0 auto; }
+        @media (max-width:700px) and (orientation:portrait) {
+            .animal-grid { grid-template-columns:repeat(3, 1fr); grid-template-rows:repeat(5, 1fr); }
+        }
+        .animal-cell { position:relative; border-radius:8px; overflow:hidden; cursor:pointer; background:#ffffff;
+            border:1.5px solid #000; box-shadow:0 3px 10px rgba(0,0,0,.1); aspect-ratio:950/596;
+            transition:transform .15s ease, box-shadow .2s ease; }
+        .animal-cell:hover { transform:scale(1.03); box-shadow:0 6px 16px rgba(0,0,0,.18); }
+        .animal-cell img { position:absolute; inset:0; width:100%; height:100%; object-fit:contain; padding:4px; pointer-events:none; }
+        .animal-cell .cell-flash { position:absolute; inset:0; background-color:transparent; transition:background-color .15s ease; pointer-events:none; }
+        .animal-cell.flash-correct .cell-flash { background-color:rgba(46,204,113,.55); }
+        .animal-cell.flash-error .cell-flash { background-color:rgba(231,76,60,.55); }
+        .animal-cell.shake { animation:shakeAnim .4s ease; }
+        .animal-cell.solved { cursor:default; }
+        .animal-cell.solved img { filter:brightness(.85); }
+
+        /* Pantalla Juego 2: Texto con listas */
+        .game2-wrapper { display:flex; flex-direction:column; align-items:center; gap:1.2rem; flex:1; padding:.3rem 0 1rem; width:100%; }
+        .text-display-box { width:100%; max-width:600px; min-height:110px; display:flex; flex-direction:column; align-items:center; justify-content:center; gap:.6rem;
+            background:linear-gradient(135deg, var(--panel) 0%, #dbe4ff 100%); border:2px solid var(--blue-600); border-radius:16px;
+            box-shadow:0 4px 14px rgba(37,79,186,.15); padding:1rem 1.5rem; }
+        #game2WordText { font-size:clamp(1.6rem,5vw,2.4rem); font-weight:900; color:var(--blue-dark); text-align:center; line-height:1.15; }
+        .lists-grid { display:grid; grid-template-columns:repeat(4, 1fr); gap:12px; width:100%; max-width:820px; margin:0 auto; }
+        @media (max-width:700px) {
+            .lists-grid { grid-template-columns:repeat(2, 1fr); }
+        }
+        .list-block { display:flex; flex-direction:column; gap:.4rem; min-width:0; }
+        .list-block-title { font-weight:800; color:var(--blue-700); font-size:clamp(.78rem,2vw,.92rem); text-align:center; }
+        .custom-select-wrapper { position:relative; user-select:none; width:100%; z-index:50; min-width:0; }
+        .custom-select { position:relative; display:flex; flex-direction:column; }
+        .custom-select__trigger { position:relative; display:flex; align-items:center; justify-content:space-between;
+            padding:0 .9rem; font-size:.85rem; font-weight:600; color:var(--blue-700); height:48px; line-height:48px;
+            background:#fff; border:2px solid var(--blue-600); border-radius:10px; cursor:pointer;
+            transition:border-color .2s, color .2s, font-weight .2s; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;
+            min-width:0; max-width:100%; }
+        .custom-select__trigger span { overflow:hidden; text-overflow:ellipsis; white-space:nowrap; min-width:0; display:block; }
+        .custom-select__trigger:hover { border-color:var(--orange); }
+        .custom-select__trigger.selected-highlight { color:var(--orange); border-color:var(--orange); font-weight:700; }
+        .custom-select__trigger::after { content:''; width:9px; height:9px; border-right:2px solid var(--blue-700);
+            border-bottom:2px solid var(--blue-700); transform:rotate(45deg); margin-top:-4px; transition:transform .2s, border-color .2s; flex-shrink:0; }
+        .custom-options { position:absolute; display:block; top:100%; left:0; right:0; background:#fff; border:2px solid var(--blue-600);
+            border-top:0; border-radius:0 0 10px 10px; box-shadow:0 4px 10px rgba(0,0,0,.1); opacity:0; visibility:hidden;
+            pointer-events:none; z-index:100; overflow:visible; transform:translateY(-6px); transition:all .25s; }
+        .custom-select.open .custom-options { opacity:1; visibility:visible; pointer-events:all; transform:translateY(0); }
+        .custom-select.open .custom-select__trigger::after { margin-top:4px; transform:rotate(-135deg); }
+        .custom-option { position:relative; display:block; padding:.55rem .9rem; font-size:.85rem; font-weight:400;
+            color:var(--blue-700); line-height:1.3; cursor:pointer; transition:all .2s; flex:1; }
+        .custom-option-row { display:flex; align-items:center; gap:.3rem; padding-right:.4rem; }
+        .btn-play-option { width:26px; height:26px; border-radius:50%; background:var(--blue-600); border:none; color:#fff;
+            cursor:pointer; display:flex; align-items:center; justify-content:center; flex-shrink:0;
+            transition:transform .15s; }
+        .btn-play-option:hover { transform:scale(1.15); }
+        .btn-play-option svg { width:11px; height:11px; margin-left:1px; pointer-events:none; }
+        .custom-option:hover { background-color:#e6f2ff; color:var(--orange); }
+        .custom-option.selected { background-color:var(--panel); color:var(--blue-dark); font-weight:700; }
+        .custom-select__trigger.correct { border-color:var(--green) !important; background-color:rgba(46,204,113,.3) !important;
+            color:#1a8c4e !important; font-weight:700 !important; box-shadow:0 0 14px rgba(46,204,113,.4); }
+        .custom-select__trigger.correct::after { border-right-color:#1a8c4e !important; border-bottom-color:#1a8c4e !important; }
+        .custom-select__trigger.wrong { border-color:var(--red) !important; background-color:rgba(231,76,60,.25) !important;
+            color:#a63328 !important; font-weight:700 !important; animation:shakeAnim .4s ease; }
+        .custom-select__trigger.wrong::after { border-right-color:#a63328 !important; border-bottom-color:#a63328 !important; }
+        .check-game2-btn { margin-top:.5rem; }
+
+        /* Pantalla Final */
+        .results { display:flex; flex-direction:column; align-items:center; justify-content:center; flex:1; gap:.5rem; padding:1rem; }
+        .final-score { font-size:clamp(3rem,8vw,4.5rem); font-weight:900; color:var(--blue-600); }
+        .trophy { font-size:3rem; animation:bounce 1s ease infinite; }
+        @keyframes bounce { 0%,100%{transform:translateY(0) scale(1);} 50%{transform:translateY(-15px) scale(1.1);} }
+        .message { font-size:clamp(1.1rem,3vw,1.4rem); font-weight:700; color:var(--blue-700); text-align:center; margin-bottom:.4rem; }
+        .time-info { color:var(--blue-600); font-weight:600; }
+        .credit { font-size:.9rem; color:#999; margin-top:.3rem; }
+        .school-logo { display:block; width:160px; max-width:28%; height:auto; margin-top:.8rem; border-radius:8px; object-fit:contain; }
+        @media (max-width:899px) { .school-logo { width:140px; max-width:160px; } }
+        @media (max-width:420px) { .school-logo { width:110px; max-width:40%; margin-top:.6rem; } }
+        .hall-of-fame { background:var(--panel); border-radius:12px; padding:1rem; margin-top:1.5rem; width:100%; max-width:600px; }
+        .hall-of-fame-title { color:var(--blue-700); font-weight:800; font-size:1.2rem; text-align:center; margin-bottom:.8rem; }
+        .hall-of-fame-table { width:100%; border-collapse:collapse; font-size:.9rem; }
+        .hall-of-fame-table th { background:var(--blue-600); color:white; padding:.5rem; text-align:left; }
+        .hall-of-fame-table td { padding:.4rem .5rem; border-bottom:1px solid #ddd; }
+        .hall-of-fame-table tr:last-child td { border-bottom:none; }
+        .hall-of-fame-table tr:nth-child(even) { background-color:rgba(255,255,255,.5); }
+        .hall-of-fame-error, .hall-of-fame-loading { padding:1rem; text-align:center; color:var(--blue-700); font-style:italic; }
+        .hall-of-fame-error { color:var(--red); }
+        .modal-overlay { position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.5);
+            display:none; align-items:center; justify-content:center; z-index:999; }
+        .modal-overlay.active { display:flex; }
+        .modal-content { background:white; padding:2rem; border-radius:15px; width:90%; max-width:400px; text-align:center; box-shadow:0 10px 30px rgba(0,0,0,0.3); }
+        .modal-input { width:100%; padding:10px; margin:10px 0; border:2px solid #ddd; border-radius:8px; font-size:1rem; }
+        .modal-validation-msg { color:var(--red); font-size:.9rem; font-weight:700; margin:-4px 0 10px; text-align:center; animation:shakeAnim .4s ease; }
+        .confetti { position:fixed; width:10px; height:10px; border-radius:50%; animation:confetti-fall 3s linear forwards; z-index:999; }
+        @keyframes confetti-fall { 0%{transform:translate(0,-20px) rotate(0);opacity:1;} 100%{transform:translate(var(--tx),var(--ty)) rotate(360deg);opacity:0;} }
+        @media (max-width:420px) { .btn { min-width:110px; padding:.6rem .9rem; height:44px; } }
+    </style>
+</head>
+<body lang="en">
+<div class="game-container">
+    <div class="top-controls">
+        <div class="lang-pill">
+            <button class="lang-flag-btn active-lang" data-lang="en" title="English">🇬🇧</button>
+            <button class="lang-flag-btn" data-lang="ar" title="الدارجة">🇲🇦</button>
+        </div>
+        <button class="mute-btn" id="muteBtn" title="Volumen">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"></polygon>
+                <path d="M15.54 3.54a9 9 0 0 1 0 12.73M19.07 4.93a13 13 0 0 1 0 14.14"></path>
+            </svg>
+        </button>
+    </div>
+
+    <!-- ===== PANTALLA INICIO ===== -->
+    <section class="screen active" id="startScreen">
+        <header>
+            <h1 id="startTitle">Grupo de los vertebrados</h1>
+            <div class="subtitle" id="startSubtitle">Vertebrados: animales con esqueleto y columna vertebral</div>
+        </header>
+        <div class="start-content">
+            <div class="advice-box" id="startAdvice">
+                Los animales vertebrados se clasifican según sus características en <span class="highlight-keyword">mamíferos</span>, <span class="highlight-keyword">aves</span>, <span class="highlight-keyword">reptiles</span>, <span class="highlight-keyword">peces</span> y <span class="highlight-keyword">anfibios</span>.<br><strong style="display:block;margin-top:.5rem;text-align:center;">¡Ánimo!</strong>
+            </div>
+            <button class="btn btn-primary" id="playBtn">Comenzar</button>
+            <img class="start-image" src="https://raw.githubusercontent.com/ManuelVS8/Efectos_audio/refs/heads/main/Ni%C3%B1os.png" alt="Niños aprendiendo">
+            <div class="hall-of-fame" id="hallOfFame">
+                <div class="hall-of-fame-title">🏆 <span id="hofTitle">Mejores puntuaciones</span> 🏆</div>
+                <table class="hall-of-fame-table">
+                    <thead>
+                        <tr>
+                            <th id="hofPos">Posición</th>
+                            <th id="hofName">Nombre</th>
+                            <th id="hofPoints">Puntos</th>
+                            <th id="hofTime">Tiempo</th>
+                        </tr>
+                    </thead>
+                    <tbody id="hofTableBody"></tbody>
+                </table>
+            </div>
+        </div>
+    </section>
+
+    <!-- ===== PANTALLA RESUMEN CON ACORDEÓN ===== -->
+    <section class="screen" id="summaryScreen">
+        <header>
+            <h1 id="summaryTitle">Características de los animales vertebrados</h1>
+        </header>
+        <div class="summary-wrapper">
+            <div class="accordion-container" id="accordionContainer"></div>
+            <button class="btn btn-primary" id="continueBtn">Continuar</button>
+        </div>
+    </section>
+
+    <!-- ===== PANTALLA JUEGO 1: GRID CON IMÁGENES (MULTI-SELECCIÓN) ===== -->
+    <section class="screen" id="game1Screen">
+        <header>
+            <h1 id="game1Title">Señala los animales que pertenecen al grupo que se indica</h1>
+        </header>
+        <div class="game-info">
+            <div class="timer" id="timerDisplay">00:00.00</div>
+            <div class="progress-bar"><div class="progress-fill" id="progressFill"></div></div>
+        </div>
+        <div class="game1-wrapper">
+            <div class="word-display" style="flex-direction:column; gap:.6rem;">
+                <span id="game1WordText">Mamíferos</span>
+                <button class="btn-play-word" id="btnPlayGame1Word" title="Escuchar">
+                    <svg viewBox="0 0 24 24" fill="#fff"><polygon points="6,4 20,12 6,20"></polygon></svg>
+                </button>
+            </div>
+            <div class="animal-grid" id="animalGrid"></div>
+        </div>
+    </section>
+
+    <!-- ===== PANTALLA JUEGO 2: TEXTO CON LISTAS ===== -->
+    <section class="screen" id="game2Screen">
+        <header>
+            <h1 id="game2Title">Clasifica las características según el grupo</h1>
+        </header>
+        <div class="game-info">
+            <div class="timer" id="timerDisplay2">00:00.00</div>
+            <div class="progress-bar"><div class="progress-fill" id="progressFill2"></div></div>
+        </div>
+        <div class="game2-wrapper">
+            <div class="text-display-box" id="game2DisplayBox">
+                <span id="game2WordText">Mamíferos</span>
+                <button class="btn-play-word" id="btnPlayGame2Word" title="Listen">
+                    <svg viewBox="0 0 24 24" fill="#fff"><polygon points="6,4 20,12 6,20"></polygon></svg>
+                </button>
+            </div>
+            <div class="lists-grid" id="listsGrid"></div>
+            <button class="btn btn-primary check-game2-btn" id="checkGame2Btn">Comprobar</button>
+        </div>
+    </section>
+
+    <!-- ===== PANTALLA FINAL ===== -->
+    <section class="screen" id="finalScreen">
+        <header>
+            <h1 class="final-title" id="finalTitle">Características de los vertebrados</h1>
+        </header>
+        <div class="results">
+            <div id="trophyDiv" class="trophy hidden">🏆</div>
+            <div id="scoreLabel" style="font-weight:700; color:var(--blue-700); font-size:1.1rem;">Puntuación:</div>
+            <div class="final-score" id="finalScore">100</div>
+            <div class="time-info" id="finalTime">Tiempo: 01:23.50</div>
+            <div class="message" id="finalMessage">¡Estu...pendo! ¡Puntuación perfecta!</div>
+            <button class="btn btn-primary" id="backBtn">Volver al menú</button>
+            <div class="credit">Creado por Manuel J. Ventura</div>
+            <img class="school-logo" src="https://raw.githubusercontent.com/ManuelVS8/Efectos_audio/refs/heads/main/Siurot.png" alt="Logo Siurot">
+        </div>
+    </section>
+</div>
+
+<!-- Modal de Envío de Puntuación -->
+<div class="modal-overlay" id="submitModal">
+    <div class="modal-content">
+        <h2 id="modalTitle">¡Juego Terminado!</h2>
+        <p id="modalTimeLabel">Tu tiempo: <span id="modalTime">01:23.50</span></p>
+        <input class="modal-input" id="playerName" placeholder="Nombre" maxlength="15" />
+        <input class="modal-input" id="playerSurname" placeholder="Apellido" maxlength="15" />
+        <p id="modalValidationMsg" class="modal-validation-msg hidden"></p>
+        <button class="btn btn-primary" id="submitScoreBtn">Guardar</button>
+        <button class="btn btn-ghost" id="discardScoreBtn">Cancelar</button>
+    </div>
+</div>
+
+<script>
+/* ====================================================
+   CONFIGURACIÓN GLOBAL
+===================================================== */
+const SHEET_NAME = "Vertebrados";
+const APP_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbw9Ty2_8K3lIOUbC8Ks0s4h2KHtwgoOzOiskUKn_R_P5wMumupq2Q46dRpsIqX3xXKl/exec";
+
+/* ====================================================
+   DATOS DEL RESUMEN CON ACORDEÓN
+===================================================== */
+const summaryData = {
+    es: [
+        { title: "Mamíferos: características generales", items: [
+            "Se desplazan con patas",
+            "Tienen su piel cubierta de pelos",
+            "Respiran por pulmones",
+            { text: "Son vivíparos (característica única)", unique: true }
+        ]},
+        { title: "Aves: características generales", items: [
+            "Se desplazan con patas y alas",
+            "Tienen su piel cubierta de plumas",
+            "Respiran por pulmones",
+            "Son ovíparos"
+        ]},
+        { title: "Reptiles: características generales", items: [
+            "Se desplazan con patas",
+            "Tienen su piel cubierta de escamas",
+            "Respiran por pulmones",
+            "Son ovíparos"
+        ]},
+        { title: "Peces: características generales", items: [
+            "Se desplazan con aletas",
+            "Tienen su piel cubierta de escamas",
+            "Respiran por branquias",
+            "Son ovíparos"
+        ]},
+        { title: "Anfibios: características generales", items: [
+            "Se desplazan con patas",
+            "Tienen su piel desnuda",
+            "Respiran por branquias cuando son renacuajos y por pulmones en su etapa adulta (también respiran a través de la piel, por eso necesitan mantenerla húmeda)",
+            "Son ovíparos"
+        ]}
+    ],
+    en: [
+        { title: "Mammals: general characteristics", items: [
+            "They move using legs",
+            "Their skin is covered in hair",
+            "They breathe through lungs",
+            { text: "They are viviparous (unique characteristic)", unique: true }
+        ]},
+        { title: "Birds: general characteristics", items: [
+            "They move using legs and wings",
+            "Their skin is covered in feathers",
+            "They breathe through lungs",
+            "They are oviparous"
+        ]},
+        { title: "Reptiles: general characteristics", items: [
+            "They move using legs",
+            "Their skin is covered in scales",
+            "They breathe through lungs",
+            "They are oviparous"
+        ]},
+        { title: "Fish: general characteristics", items: [
+            "They move using fins",
+            "Their skin is covered in scales",
+            "They breathe through gills",
+            "They are oviparous"
+        ]},
+        { title: "Amphibians: general characteristics", items: [
+            "They move using legs",
+            "They have moist skin",
+            "They breathe through gills when they are tadpoles and through lungs in their adult stage (they also breathe through their skin, which is why they need to keep it moist)",
+            "They are oviparous"
+        ]}
+    ],
+    ar: [
+        { title: "الثدييات: الخصائص العامة", items: [
+            "كيتحركو بالأرجل",
+            "جلدهم مغطى بالشعر",
+            "كيتنفسو بالرئتين",
+            { text: "ولاّدة (خاصية فريدة)", unique: true }
+        ]},
+        { title: "الطيور: الخصائص العامة", items: [
+            "كيتحركو بالأرجل والجوانح",
+            "جلدهم مغطى بالريش",
+            "كيتنفسو بالرئتين",
+            "بياضة"
+        ]},
+        { title: "الزواحف: الخصائص العامة", items: [
+            "كيتحركو بالأرجل",
+            "جلدهم مغطى بالحراشف",
+            "كيتنفسو بالرئتين",
+            "بياضة"
+        ]},
+        { title: "الأسماك: الخصائص العامة", items: [
+            "كيتحركو بالزعانف",
+            "جلدهم مغطى بالحراشف",
+            "كيتنفسو بالخياشيم",
+            "بياضة"
+        ]},
+        { title: "البرمائيات: الخصائص العامة", items: [
+            "كيتحركو بالأرجل",
+            "جلدهم عاري",
+            "كيتنفسو بالخياشيم ملي كيكونو شراغيف وبالرئتين فمرحلة الكبر (كيتنفسو ايضا من الجلد، هادشي علاش خاصهم يحافظو عليه رطب)",
+            "بياضة"
+        ]}
+    ]
+};
+
+/* ====================================================
+   DATOS DEL JUEGO 1: GRID CON IMÁGENES (MULTI-SELECCIÓN)
+   Formato de imagen: 950 x 596.
+   Siempre se muestran 3 imágenes por grupo (15 en total en el grid).
+   El delfín solo sale garantizado cuando se pregunta por el grupo Mamíferos.
+===================================================== */
+const animalGroupsData = {
+    es: [
+        {
+            group: "Mamíferos",
+            dolphinImg: { url: "https://raw.githubusercontent.com/ManuelVS8/Audios-juegos-SCIENCE/refs/heads/main/Animales_y_Plantas/Delfin.png", alt: "Delfín" },
+            pool: [
+                { url: "https://raw.githubusercontent.com/ManuelVS8/Audios-juegos-SCIENCE/refs/heads/main/Animales_y_Plantas/Delfin.png", alt: "Delfín" },
+                { url: "https://raw.githubusercontent.com/ManuelVS8/Audios-juegos-SCIENCE/refs/heads/main/Animales_y_Plantas/vaca.png", alt: "Vaca" },
+                { url: "https://raw.githubusercontent.com/ManuelVS8/Audios-juegos-SCIENCE/refs/heads/main/Animales_y_Plantas/pantera.png", alt: "Pantera" },
+                { url: "https://raw.githubusercontent.com/ManuelVS8/Audios-juegos-SCIENCE/refs/heads/main/Animales_y_Plantas/oveja.png", alt: "Oveja" },
+                { url: "https://raw.githubusercontent.com/ManuelVS8/Audios-juegos-SCIENCE/refs/heads/main/Animales_y_Plantas/elefante.png", alt: "Elefante" },
+                { url: "https://raw.githubusercontent.com/ManuelVS8/Audios-juegos-SCIENCE/refs/heads/main/Animales_y_Plantas/Koala.png", alt: "Koala" },
+                { url: "https://raw.githubusercontent.com/ManuelVS8/Audios-juegos-SCIENCE/refs/heads/main/Animales_y_Plantas/gorila.png", alt: "Gorila" }
+            ]
+        },
+        {
+            group: "Aves",
+            dolphinImg: null,
+            pool: [
+                { url: "https://raw.githubusercontent.com/ManuelVS8/Audios-juegos-SCIENCE/refs/heads/main/Animales_y_Plantas/Kiwi.png", alt: "Kiwi" },
+                { url: "https://raw.githubusercontent.com/ManuelVS8/Audios-juegos-SCIENCE/refs/heads/main/Animales_y_Plantas/Avestruz.png", alt: "Avestruz" },
+                { url: "https://raw.githubusercontent.com/ManuelVS8/Audios-juegos-SCIENCE/refs/heads/main/Animales_y_Plantas/Pinguino.png", alt: "Pingüino" }
+            ]
+        },
+        {
+            group: "Reptiles",
+            dolphinImg: null,
+            pool: [
+                { url: "https://raw.githubusercontent.com/ManuelVS8/Audios-juegos-SCIENCE/refs/heads/main/Animales_y_Plantas/Tortuga.png", alt: "Tortuga" },
+                { url: "https://raw.githubusercontent.com/ManuelVS8/Audios-juegos-SCIENCE/refs/heads/main/Animales_y_Plantas/Serpiente.png", alt: "Serpiente" },
+                { url: "https://raw.githubusercontent.com/ManuelVS8/Audios-juegos-SCIENCE/refs/heads/main/Animales_y_Plantas/Cocodrilo.png", alt: "Cocodrilo" },
+                { url: "https://raw.githubusercontent.com/ManuelVS8/Audios-juegos-SCIENCE/refs/heads/main/Animales_y_Plantas/Camaleon.png", alt: "Camaleón" }
+            ]
+        },
+        {
+            group: "Peces",
+            dolphinImg: null,
+            pool: [
+                { url: "https://raw.githubusercontent.com/ManuelVS8/Audios-juegos-SCIENCE/refs/heads/main/Animales_y_Plantas/tiburon.png", alt: "Tiburón" },
+                { url: "https://raw.githubusercontent.com/ManuelVS8/Audios-juegos-SCIENCE/refs/heads/main/Animales_y_Plantas/Sardina.png", alt: "Sardina" },
+                { url: "https://raw.githubusercontent.com/ManuelVS8/Audios-juegos-SCIENCE/refs/heads/main/Animales_y_Plantas/Caballito.png", alt: "Caballito de mar" }
+            ]
+        },
+        {
+            group: "Anfibios",
+            dolphinImg: null,
+            pool: [
+                { url: "https://raw.githubusercontent.com/ManuelVS8/Audios-juegos-SCIENCE/refs/heads/main/Animales_y_Plantas/Salamandra.png", alt: "Salamandra" },
+                { url: "https://raw.githubusercontent.com/ManuelVS8/Audios-juegos-SCIENCE/refs/heads/main/Animales_y_Plantas/Ajolote.png", alt: "Ajolote" },
+                { url: "https://raw.githubusercontent.com/ManuelVS8/Audios-juegos-SCIENCE/refs/heads/main/Animales_y_Plantas/Rana.png", alt: "Rana" }
+            ]
+        }
+    ],
+    en: [
+        { group: "Mammals" },
+        { group: "Birds" },
+        { group: "Reptiles" },
+        { group: "Fish" },
+        { group: "Amphibians" }
+    ],
+    ar: [
+        { group: "الثدييات" },
+        { group: "الطيور" },
+        { group: "الزواحف" },
+        { group: "الأسماك" },
+        { group: "البرمائيات" }
+    ]
+};
+
+/* ====================================================
+   DATOS DEL JUEGO 2: TEXTO CON LISTAS
+===================================================== */
+const vertebrateGroups = {
+    es: ["Mamíferos", "Aves", "Reptiles", "Peces", "Anfibios"],
+    en: ["Mammals", "Birds", "Reptiles", "Fish", "Amphibians"],
+    ar: ["الثدييات", "الطيور", "الزواحف", "الأسماك", "البرمائيات"]
+};
+
+const listOptions = {
+    es: {
+        extremidades: ["Patas", "Patas y alas", "Aletas"],
+        piel: ["Pelos", "Plumas", "Escamas", "Piel desnuda"],
+        respiracion: ["Pulmones", "Branquias", "Branquias (jóvenes) y pulmones (adultos)"],
+        reproduccion: ["Vivíparos", "Ovíparos"]
+    },
+    en: {
+        extremidades: ["Legs", "Legs and wings", "Fins"],
+        piel: ["Hair", "Feathers", "Scales", "Moist skin"],
+        respiracion: ["Lungs", "Gills", "Gills (young) and lungs (adults)"],
+        reproduccion: ["Viviparous", "Oviparous"]
+    },
+    ar: {
+        extremidades: ["أرجل", "أرجل وجوانح", "زعانف"],
+        piel: ["شعر", "ريش", "حراشف", "جلد عاري"],
+        respiracion: ["رئتين", "خياشيم", "خياشيم (الصغار) ورئتين (الكبار)"],
+        reproduccion: ["ولاّدة", "بياضة"]
+    }
+};
+
+const listTitles = {
+    es: ["Extremidades", "Piel cubierta de", "Respiración", "Reproducción"],
+    en: ["Limbs", "Skin covered in", "Breathing", "Reproduction"],
+    ar: ["الأطراف", "الجلد مغطى بـ", "التنفس", "التكاثر"]
+};
+
+// Respuestas correctas por grupo (índices dentro de cada array de listOptions)
+const correctAnswers = {
+    es: {
+        "Mamíferos": { extremidades: "Patas", piel: "Pelos", respiracion: "Pulmones", reproduccion: "Vivíparos" },
+        "Aves": { extremidades: "Patas y alas", piel: "Plumas", respiracion: "Pulmones", reproduccion: "Ovíparos" },
+        "Reptiles": { extremidades: "Patas", piel: "Escamas", respiracion: "Pulmones", reproduccion: "Ovíparos" },
+        "Peces": { extremidades: "Aletas", piel: "Escamas", respiracion: "Branquias", reproduccion: "Ovíparos" },
+        "Anfibios": { extremidades: "Patas", piel: "Piel desnuda", respiracion: "Branquias (jóvenes) y pulmones (adultos)", reproduccion: "Ovíparos" }
+    },
+    en: {
+        "Mammals": { extremidades: "Legs", piel: "Hair", respiracion: "Lungs", reproduccion: "Viviparous" },
+        "Birds": { extremidades: "Legs and wings", piel: "Feathers", respiracion: "Lungs", reproduccion: "Oviparous" },
+        "Reptiles": { extremidades: "Legs", piel: "Scales", respiracion: "Lungs", reproduccion: "Oviparous" },
+        "Fish": { extremidades: "Fins", piel: "Scales", respiracion: "Gills", reproduccion: "Oviparous" },
+        "Amphibians": { extremidades: "Legs", piel: "Moist skin", respiracion: "Gills (young) and lungs (adults)", reproduccion: "Oviparous" }
+    },
+    ar: {
+        "الثدييات": { extremidades: "أرجل", piel: "شعر", respiracion: "رئتين", reproduccion: "ولاّدة" },
+        "الطيور": { extremidades: "أرجل وجوانح", piel: "ريش", respiracion: "رئتين", reproduccion: "بياضة" },
+        "الزواحف": { extremidades: "أرجل", piel: "حراشف", respiracion: "رئتين", reproduccion: "بياضة" },
+        "الأسماك": { extremidades: "زعانف", piel: "حراشف", respiracion: "خياشيم", reproduccion: "بياضة" },
+        "البرمائيات": { extremidades: "أرجل", piel: "جلد عاري", respiracion: "خياشيم (الصغار) ورئتين (الكبار)", reproduccion: "بياضة" }
+    }
+};
+
+/* ====================================================
+   i18n TEXTOS DE INTERFAZ
+===================================================== */
+const i18n = {
+    es: {
+        startTitle: 'Grupo de los vertebrados',
+        startSubtitle: 'Vertebrados: animales con esqueleto y columna vertebral',
+        startAdvice: 'Los animales vertebrados se clasifican según sus características en <span class="highlight-keyword">mamíferos</span>, <span class="highlight-keyword">aves</span>, <span class="highlight-keyword">reptiles</span>, <span class="highlight-keyword">peces</span> y <span class="highlight-keyword">anfibios</span>.<br><strong style="display:block;margin-top:.5rem;text-align:center;">¡Ánimo!</strong>',
+        startBtn: 'Comenzar',
+        summaryTitle: 'Características de los animales vertebrados',
+        continueBtn: 'Continuar',
+        hofTitle: 'Mejores puntuaciones',
+        hofPos: 'Posición', hofName: 'Nombre', hofPoints: 'Puntos', hofTime: 'Tiempo',
+        game1Title: 'Señala los animales que pertenecen al grupo que se indica',
+        game2Title: 'Clasifica las características según el grupo',
+        checkBtn: 'Comprobar',
+        finalTitle: 'Características de los vertebrados',
+        scoreLabel: 'Puntuación:',
+        timeLabel: 'Tiempo:',
+        backBtn: 'Volver al menú',
+        modalTitle: '¡Juego Terminado!',
+        modalTimeLabel: 'Tu tiempo:',
+        modalSave: 'Guardar',
+        modalCancel: 'Cancelar',
+        namePlaceholder: 'Nombre',
+        surnamePlaceholder: 'Apellido',
+        validationMsg: 'Por favor, rellena nombre y apellido',
+        msgPerfect: '¡Estu...pendo! ¡Puntuación perfecta!',
+        msg80: 'Casi lo logras. ¡Sigue practicando!',
+        msg50: 'Esto no está listo; aún puedes hacerlo mejor',
+        msg0: 'Vaya desastre... ¿Seguro que has estudiado?'
+    },
+    en: {
+        startTitle: 'The Group of Vertebrates',
+        startSubtitle: 'Vertebrates: animals with a skeleton and a spine',
+        startAdvice: 'Vertebrate animals are classified according to their characteristics into <span class="highlight-keyword">mammals</span>, <span class="highlight-keyword">birds</span>, <span class="highlight-keyword">reptiles</span>, <span class="highlight-keyword">fish</span> and <span class="highlight-keyword">amphibians</span>.<br><strong style="display:block;margin-top:.5rem;text-align:center;">Good luck!</strong>',
+        startBtn: 'Start',
+        summaryTitle: 'Characteristics of Vertebrate Animals',
+        continueBtn: 'Continue',
+        hofTitle: 'Best scores',
+        hofPos: 'Position', hofName: 'Name', hofPoints: 'Points', hofTime: 'Time',
+        game1Title: 'Point out the animals that belong to the indicated group',
+        game2Title: 'Classify the characteristics according to the group',
+        checkBtn: 'Check',
+        finalTitle: 'Characteristics of Vertebrates',
+        scoreLabel: 'Score:',
+        timeLabel: 'Time:',
+        backBtn: 'Back to menu',
+        modalTitle: 'Game Over!',
+        modalTimeLabel: 'Your time:',
+        modalSave: 'Save',
+        modalCancel: 'Cancel',
+        namePlaceholder: 'Name',
+        surnamePlaceholder: 'Surname',
+        validationMsg: 'Please fill in name and surname',
+        msgPerfect: 'Fan-tas-tic! Perfect score!',
+        msg80: 'Almost there. Keep practising!',
+        msg50: 'Not quite ready; you can still do better',
+        msg0: 'What a disaster... Did you really study?'
+    },
+    ar: {
+        startTitle: 'مجموعة الفقاريات',
+        startSubtitle: 'الفقاريات: حيوانات عندها هيكل عظمي وعمود فقري',
+        startAdvice: 'الحيوانات الفقارية كيتصنفو حسب الخصائص ديالهم ف <span class="highlight-keyword">الثدييات</span>، <span class="highlight-keyword">الطيور</span>، <span class="highlight-keyword">الزواحف</span>، <span class="highlight-keyword">الأسماك</span> و <span class="highlight-keyword">البرمائيات</span>.<br><strong style="display:block;margin-top:.5rem;text-align:center;">بالتوفيق!</strong>',
+        startBtn: 'بدا',
+        summaryTitle: 'خصائص الحيوانات الفقارية',
+        continueBtn: 'كمل',
+        hofTitle: 'أحسن النقط',
+        hofPos: 'الرتبة', hofName: 'الإسم', hofPoints: 'النقط', hofTime: 'الوقت',
+        game1Title: 'حدد الحيوانات اللي كينتماو للمجموعة المذكورة',
+        game2Title: 'صنف الخصائص حسب المجموعة',
+        checkBtn: 'تحقق',
+        finalTitle: 'خصائص الفقاريات',
+        scoreLabel: 'النقطة:',
+        timeLabel: 'الوقت:',
+        backBtn: 'رجع للقائمة',
+        modalTitle: 'خلصت اللعبة!',
+        modalTimeLabel: 'الوقت ديالك:',
+        modalSave: 'حفظ',
+        modalCancel: 'لا',
+        namePlaceholder: 'الإسم',
+        surnamePlaceholder: 'النسب',
+        validationMsg: 'عافاك، عمر الإسم والنسب',
+        msgPerfect: 'بطل! نقطة كاملة!',
+        msg80: 'قريب منها. كمل تمرن!',
+        msg50: 'مازال ماشي هادشي، تقدر دير أحسن',
+        msg0: 'آه... واش درتي تقرا؟'
+    }
+};
+
+/* ====================================================
+   VARIABLES GLOBALES
+===================================================== */
+let currentLang = 'en'; // Juego bilingüe inglés/darija (sin español, por diseño)
+let isMuted = false;
+let startTime = 0;
+let timerInterval = null;
+let totalErrors = 0;
+let currentScreen = 'start';
+let isHofLoading = false;
+let lastElapsedSeconds = 0;
+const TOTAL_INTERACTIONS = 35; // 15 (juego 1: 3 animales x 5 grupos) + 20 (juego 2: 4 listas x 5 grupos)
+
+// Variables Juego 1 (Grid multi-selección)
+let game1GroupOrder = []; // orden aleatorio de índices de grupo (0-4) a preguntar
+let game1CurrentGroupIndex = 0;
+let game1CurrentRoundImages = []; // 15 imágenes de la ronda actual (3 por grupo)
+let game1CurrentAskedGroup = '';
+let game1FoundInGroup = 0;
+let game1TotalFound = 0;
+
+// Variables Juego 2 (Texto con listas)
+let game2GroupOrder = [];
+let game2CurrentIndex = 0;
+let game2Selections = { extremidades: null, piel: null, respiracion: null, reproduccion: null };
+let game2Locked = false;
+
+/* ====================================================
+   SISTEMA DE AUDIO Y TTS
+===================================================== */
+function unlockAudioContext() {
+    try {
+        const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+        if (audioCtx.state === 'suspended') audioCtx.resume();
+        const buf = audioCtx.createBuffer(1,1,22050);
+        const src = audioCtx.createBufferSource();
+        src.buffer = buf;
+        src.connect(audioCtx.destination);
+        src.start(0);
+    } catch(e) {}
+}
+
+function forceInitTTS() {
+    try {
+        const u = new SpeechSynthesisUtterance('');
+        window.speechSynthesis.speak(u);
+        window.speechSynthesis.cancel();
+    } catch(e) {}
+}
+
+function getBestVoice(lang) {
+    const voices = window.speechSynthesis.getVoices();
+    if (!voices.length) return null;
+    const matchLang = lang === 'ar' ? 'ar' : lang;
+    const prefer = lang === 'es' ? ['Google español','Natural','Microsoft'] : (lang === 'ar' ? ['Google','Natural','Microsoft'] : ['Google UK','Natural','Microsoft']);
+    for (let p of prefer) {
+        for (let v of voices) {
+            if (v.name.includes(p) && v.lang.startsWith(matchLang)) return v;
+        }
+    }
+    return voices.find(v => v.lang.startsWith(matchLang)) || voices[0];
+}
+
+function speakText(text, lang) {
+    window.speechSynthesis.cancel();
+    if (isMuted) return;
+    try {
+        const u = new SpeechSynthesisUtterance(text);
+        u.lang = lang === 'es' ? 'es-ES' : lang === 'ar' ? 'ar-MA' : 'en-GB';
+        u.voice = getBestVoice(lang);
+        u.rate = 0.8;
+        window.speechSynthesis.speak(u);
+    } catch(e) {}
+}
+
+function playAudio(url) {
+    if (isMuted) return;
+    const audio = new Audio(url);
+    audio.play().catch(e => console.log('Audio error:', e));
+}
+
+/* ====================================================
+   SISTEMA DE SONIDOS
+===================================================== */
+const sounds = {
+    correcto: 'https://raw.githubusercontent.com/ManuelVS8/Efectos_audio/refs/heads/main/Correcto.mp3',
+    error: 'https://raw.githubusercontent.com/ManuelVS8/Efectos_audio/refs/heads/main/Error.mp3',
+    victoria: 'https://raw.githubusercontent.com/ManuelVS8/Efectos_audio/refs/heads/main/Termin%C3%A9.mp3',
+    completado: 'https://raw.githubusercontent.com/ManuelVS8/Efectos_audio/refs/heads/main/Completado.mp3',
+    tap: 'https://raw.githubusercontent.com/ManuelVS8/Efectos_audio/refs/heads/main/Tap.mp3'
+};
+
+function playSound(soundName) {
+    if (isMuted) return;
+    playAudio(sounds[soundName]);
+}
+
+/* ====================================================
+   SELECTOR DE IDIOMA
+===================================================== */
+// Selector de idioma: este juego es bilingüe inglés/darija (sin español, por diseño original).
+document.querySelectorAll('.lang-flag-btn').forEach(btn => {
+    btn.addEventListener('click', () => {
+        document.querySelectorAll('.lang-flag-btn').forEach(b => b.classList.remove('active-lang'));
+        btn.classList.add('active-lang');
+        currentLang = btn.dataset.lang;
+        document.documentElement.lang = currentLang;
+        applyLanguage(currentLang);
+    });
+});
+
+function applyLanguage(lang) {
+    window.speechSynthesis.cancel();
+    const t = i18n[lang];
+    document.getElementById('startTitle').innerHTML = t.startTitle;
+    document.getElementById('startSubtitle').innerHTML = t.startSubtitle;
+    document.getElementById('startAdvice').innerHTML = t.startAdvice;
+    document.getElementById('playBtn').innerHTML = t.startBtn;
+    document.getElementById('summaryTitle').innerHTML = t.summaryTitle;
+    document.getElementById('continueBtn').innerHTML = t.continueBtn;
+    document.getElementById('game1Title').innerHTML = t.game1Title;
+    document.getElementById('game2Title').innerHTML = t.game2Title;
+    document.getElementById('checkGame2Btn').innerHTML = t.checkBtn;
+    document.getElementById('finalTitle').innerHTML = t.finalTitle;
+    document.getElementById('scoreLabel').innerHTML = t.scoreLabel;
+    document.getElementById('backBtn').innerHTML = t.backBtn;
+    document.getElementById('hofTitle').innerHTML = t.hofTitle;
+    document.getElementById('hofPos').innerHTML = t.hofPos;
+    document.getElementById('hofName').innerHTML = t.hofName;
+    document.getElementById('hofPoints').innerHTML = t.hofPoints;
+    document.getElementById('hofTime').innerHTML = t.hofTime;
+    document.getElementById('modalTitle').innerHTML = t.modalTitle;
+    const currentModalTimeEl = document.getElementById('modalTime');
+    const currentModalTime = currentModalTimeEl ? currentModalTimeEl.textContent : '00:00.00';
+    document.getElementById('modalTimeLabel').innerHTML = t.modalTimeLabel + ' <span id="modalTime">' + currentModalTime + '</span>';
+    document.getElementById('submitScoreBtn').innerHTML = t.modalSave;
+    document.getElementById('discardScoreBtn').innerHTML = t.modalCancel;
+    document.getElementById('playerName').placeholder = t.namePlaceholder;
+    document.getElementById('playerSurname').placeholder = t.surnamePlaceholder;
+
+    if (currentScreen === 'summary') {
+        buildAccordion();
+    } else if (currentScreen === 'game1') {
+        showGame1Group();
+    } else if (currentScreen === 'game2') {
+        showGame2Question();
+    }
+}
+
+/* ====================================================
+   BOTÓN SILENCIO
+===================================================== */
+document.getElementById('muteBtn').addEventListener('click', () => {
+    isMuted = !isMuted;
+    const btn = document.getElementById('muteBtn');
+    if (isMuted) {
+        btn.classList.add('muted');
+        btn.innerHTML = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"></polygon><line x1="23" y1="9" x2="17" y2="15"></line><line x1="17" y1="9" x2="23" y2="15"></line></svg>';
+    } else {
+        btn.classList.remove('muted');
+        btn.innerHTML = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"></polygon><path d="M15.54 3.54a9 9 0 0 1 0 12.73M19.07 4.93a13 13 0 0 1 0 14.14"></path></svg>';
+        playSound('tap');
+    }
+});
+
+/* ====================================================
+   PANTALLA INICIO
+===================================================== */
+document.getElementById('playBtn').addEventListener('click', () => {
+    playSound('tap');
+    unlockAudioContext();
+    forceInitTTS();
+    preloadAllAnimalImages();
+    showScreen('summary');
+});
+
+function preloadAllAnimalImages() {
+    const urls = [];
+    animalGroupsData.es.forEach(g => {
+        g.pool.forEach(img => urls.push(img.url));
+    });
+    urls.forEach(url => {
+        const img = new Image();
+        img.src = url;
+    });
+}
+
+/* ====================================================
+   PANTALLA RESUMEN CON ACORDEÓN
+===================================================== */
+function buildAccordion() {
+    const container = document.getElementById('accordionContainer');
+    if (!container) return;
+    container.innerHTML = '';
+    const data = summaryData[currentLang];
+
+    const summaryKeywords = currentLang === 'es'
+        ? ['patas y alas', 'patas', 'aletas', 'pulmones', 'branquias', 'pelos', 'plumas', 'escamas', 'piel desnuda', 'ovíparos', 'vivíparos']
+        : currentLang === 'ar'
+        ? ['الأرجل والجوانح', 'الأرجل', 'الزعانف', 'الرئتين', 'الخياشيم', 'الشعر', 'الريش', 'الحراشف', 'جلد عاري', 'بياضة', 'ولاّدة']
+        : ['legs and wings', 'legs', 'fins', 'lungs', 'gills', 'hair', 'feathers', 'scales', 'moist skin', 'oviparous', 'viviparous'];
+
+    function highlightSummaryKeywords(text) {
+        let result = text;
+        summaryKeywords.forEach(kw => {
+            const regex = new RegExp(`\\b${kw}\\b`, 'gi');
+            result = result.replace(regex, `<span class="keyword-summary">${kw}</span>`);
+        });
+        return result;
+    }
+
+    const colorClasses = ['color-mamiferos', 'color-aves', 'color-reptiles', 'color-peces', 'color-anfibios'];
+
+    data.forEach((section, idx) => {
+        const itemsHTML = section.items.map(item => {
+            if (typeof item === 'object' && item.unique) {
+                return `<li class="unique-feature">${item.text}</li>`;
+            }
+            return `<li>${highlightSummaryKeywords(item)}</li>`;
+        }).join('');
+
+        const item = document.createElement('div');
+        item.className = 'accordion-item ' + colorClasses[idx];
+        item.innerHTML = `
+            <div class="accordion-header">
+                <span>${section.title}</span>
+                <span class="chevron">▼</span>
+            </div>
+            <div class="accordion-body">
+                <div class="accordion-body-inner">
+                    <ul class="accordion-list">${itemsHTML}</ul>
+                </div>
+            </div>
+        `;
+        item.querySelector('.accordion-header').addEventListener('click', () => {
+            playSound('tap');
+            item.classList.toggle('open');
+        });
+        container.appendChild(item);
+    });
+}
+
+document.getElementById('continueBtn').addEventListener('click', () => {
+    playSound('tap');
+    startTimer();
+    showScreen('game1');
+    initGame1();
+});
+
+/* ====================================================
+   JUEGO 1: GRID CON IMÁGENES (MULTI-SELECCIÓN)
+===================================================== */
+function initGame1() {
+    totalErrors = 0;
+    game1TotalFound = 0;
+    document.getElementById('trophyDiv').classList.add('hidden');
+
+    // Se sortea únicamente el ORDEN en que se preguntará por cada grupo.
+    // El conjunto de imágenes del grid se vuelve a sortear en cada ronda (showGame1Group).
+    game1GroupOrder = shuffleArray([0,1,2,3,4]);
+    game1CurrentGroupIndex = 0;
+
+    updateProgress();
+    showGame1Group();
+}
+
+function pickThreeFromPool(groupDef, guaranteeDolphin) {
+    let images;
+    if (guaranteeDolphin && groupDef.dolphinImg) {
+        const restPool = groupDef.pool.filter(img => img.url !== groupDef.dolphinImg.url);
+        const restShuffled = shuffleArray(restPool).slice(0, 2);
+        images = [groupDef.dolphinImg, ...restShuffled];
+    } else {
+        images = shuffleArray(groupDef.pool).slice(0, 3);
+    }
+    return shuffleArray(images);
+}
+
+const GROUP_COLOR_CLASSES = ['group-label-mamiferos', 'group-label-aves', 'group-label-reptiles', 'group-label-peces', 'group-label-anfibios'];
+
+function applyGroupLabelColor(elementId, groupIdx) {
+    const el = document.getElementById(elementId);
+    GROUP_COLOR_CLASSES.forEach(c => el.classList.remove(c));
+    el.classList.add(GROUP_COLOR_CLASSES[groupIdx]);
+}
+
+function showGame1Group() {
+    if (game1CurrentGroupIndex >= game1GroupOrder.length) {
+        endGame1();
+        return;
+    }
+    const askedGroupIdx = game1GroupOrder[game1CurrentGroupIndex];
+    const askedGroupDef = animalGroupsData.es[askedGroupIdx];
+    const groupNameLocalized = currentLang === 'ar' ? animalGroupsData.ar[askedGroupIdx].group : animalGroupsData.en[askedGroupIdx].group;
+    document.getElementById('game1WordText').textContent = groupNameLocalized;
+    applyGroupLabelColor('game1WordText', askedGroupIdx);
+    document.getElementById('btnPlayGame1Word').classList.remove('hidden');
+    game1FoundInGroup = 0;
+
+    // Se sortean 3 imágenes por cada uno de los 5 grupos (15 en total).
+    // El delfín solo está garantizado si el grupo preguntado en esta ronda es "Mamíferos".
+    game1CurrentRoundImages = animalGroupsData.es.map((g, idx) => {
+        const isAskedGroup = idx === askedGroupIdx;
+        const isMammalGroup = g.group === "Mamíferos";
+        const guaranteeDolphin = isAskedGroup && isMammalGroup;
+        const images = pickThreeFromPool(g, guaranteeDolphin);
+        return { group: g.group, images };
+    });
+
+    game1CurrentAskedGroup = askedGroupDef.group;
+    buildAnimalGrid();
+
+    setTimeout(() => { speakText(groupNameLocalized, currentLang); }, 300);
+}
+
+document.getElementById('btnPlayGame1Word').addEventListener('click', () => {
+    const text = document.getElementById('game1WordText').textContent;
+    speakText(text, currentLang);
+});
+
+function buildAnimalGrid() {
+    const grid = document.getElementById('animalGrid');
+    grid.innerHTML = '';
+
+    let allImages = [];
+    game1CurrentRoundImages.forEach(g => {
+        g.images.forEach(img => allImages.push({ ...img, group: g.group }));
+    });
+    allImages = shuffleArray(allImages);
+
+    allImages.forEach(imgData => {
+        const cell = document.createElement('div');
+        cell.className = 'animal-cell';
+        cell.dataset.group = imgData.group;
+        cell.innerHTML = `<img src="${imgData.url}" alt="${imgData.alt}"><div class="cell-flash"></div>`;
+        cell.addEventListener('click', () => handleAnimalClick(cell, imgData));
+        grid.appendChild(cell);
+    });
+}
+
+function handleAnimalClick(cell, imgData) {
+    if (cell.classList.contains('solved')) return;
+    const currentGroup = game1CurrentAskedGroup;
+
+    if (imgData.group === currentGroup) {
+        playSound('correcto');
+        cell.classList.add('flash-correct', 'solved');
+        game1FoundInGroup++;
+        game1TotalFound++;
+        updateProgress();
+
+        const totalInGroup = game1CurrentRoundImages.find(g => g.group === currentGroup).images.length;
+        if (game1FoundInGroup >= totalInGroup) {
+            setTimeout(() => {
+                game1CurrentGroupIndex++;
+                showGame1Group();
+            }, 500);
+        }
+    } else {
+        totalErrors++;
+        playSound('error');
+        cell.classList.add('flash-error', 'shake');
+        setTimeout(() => {
+            cell.classList.remove('flash-error', 'shake');
+        }, 450);
+    }
+}
+
+function endGame1() {
+    window.speechSynthesis.cancel();
+    playSound('completado');
+    setTimeout(() => {
+        showScreen('game2');
+        initGame2();
+    }, 1000);
+}
+
+/* ====================================================
+   JUEGO 2: TEXTO CON LISTAS
+===================================================== */
+function initGame2() {
+    game2GroupOrder = shuffleArray([0,1,2,3,4]);
+    game2CurrentIndex = 0;
+    updateProgress();
+    showGame2Question();
+}
+
+function showGame2Question() {
+    if (game2CurrentIndex >= game2GroupOrder.length) {
+        endGame();
+        return;
+    }
+    const groupIdx = game2GroupOrder[game2CurrentIndex];
+    const groupName = vertebrateGroups[currentLang][groupIdx];
+    document.getElementById('game2WordText').textContent = groupName;
+    applyGroupLabelColor('game2DisplayBox', groupIdx);
+    game2Selections = { extremidades: null, piel: null, respiracion: null, reproduccion: null };
+    game2Locked = false;
+    buildLists();
+    setTimeout(() => { speakText(groupName, currentLang); }, 300);
+}
+
+document.getElementById('btnPlayGame2Word').addEventListener('click', () => {
+    const text = document.getElementById('game2WordText').textContent;
+    speakText(text, currentLang);
+});
+
+function buildLists() {
+    const container = document.getElementById('listsGrid');
+    container.innerHTML = '';
+    const categories = ['extremidades', 'piel', 'respiracion', 'reproduccion'];
+    const titles = listTitles[currentLang];
+
+    categories.forEach((cat, idx) => {
+        const options = listOptions[currentLang][cat];
+        const block = document.createElement('div');
+        block.className = 'list-block';
+        // En el grid 2x2 de móvil, las listas de la fila superior (idx 0 y 1) deben tener mayor
+        // z-index que las de la fila inferior (idx 2 y 3), para que su desplegable (que abre hacia
+        // abajo) se superponga sobre el contenido inferior y no quede oculto tras él.
+        const rowPriorityZ = (idx === 0 || idx === 1) ? 60 : 40;
+        block.style.position = 'relative';
+        block.style.zIndex = rowPriorityZ;
+        block.innerHTML = `
+            <div class="custom-select-wrapper">
+                <div class="custom-select" data-category="${cat}">
+                    <div class="custom-select__trigger"><span>${titles[idx]}</span></div>
+                    <div class="custom-options">
+                        ${options.map(opt => `
+                            <div class="custom-option-row">
+                                <span class="custom-option" data-value="${opt}">${opt}</span>
+                                <button class="btn-play-option" data-speak="${opt}" title="Listen" type="button">
+                                    <svg viewBox="0 0 24 24" fill="#fff"><polygon points="6,4 20,12 6,20"></polygon></svg>
+                                </button>
+                            </div>
+                        `).join('')}
+                    </div>
+                </div>
+            </div>
+        `;
+        container.appendChild(block);
+    });
+
+    // Comportamiento de apertura/cierre y selección
+    document.querySelectorAll('.custom-select').forEach(select => {
+        const trigger = select.querySelector('.custom-select__trigger');
+        trigger.addEventListener('click', (e) => {
+            e.stopPropagation();
+            if (game2Locked) return;
+            document.querySelectorAll('.custom-select').forEach(s => { if (s !== select) s.classList.remove('open'); });
+            select.classList.toggle('open');
+        });
+
+        select.querySelectorAll('.custom-option').forEach(opt => {
+            opt.addEventListener('click', function(e) {
+                e.stopPropagation();
+                if (game2Locked) return;
+                playSound('tap');
+                const cat = select.dataset.category;
+                const value = this.dataset.value;
+                game2Selections[cat] = value;
+
+                select.querySelectorAll('.custom-option').forEach(o => o.classList.remove('selected'));
+                this.classList.add('selected');
+                trigger.innerHTML = `<span>${value}</span>`;
+                trigger.classList.add('selected-highlight');
+                trigger.classList.remove('correct', 'wrong');
+                select.classList.remove('open');
+            });
+        });
+
+        select.querySelectorAll('.btn-play-option').forEach(playBtn => {
+            playBtn.addEventListener('click', (e) => {
+                e.stopPropagation();
+                speakText(playBtn.dataset.speak, currentLang);
+            });
+        });
+    });
+
+    document.addEventListener('click', closeAllSelects);
+}
+
+function closeAllSelects() {
+    document.querySelectorAll('.custom-select').forEach(s => s.classList.remove('open'));
+}
+
+document.getElementById('checkGame2Btn').addEventListener('click', () => {
+    if (game2Locked) return;
+    if (!game2Selections.extremidades || !game2Selections.piel || !game2Selections.respiracion || !game2Selections.reproduccion) {
+        playSound('error');
+        return;
+    }
+
+    game2Locked = true;
+    const groupIdx = game2GroupOrder[game2CurrentIndex];
+    const groupName = vertebrateGroups[currentLang][groupIdx];
+    const correct = correctAnswers[currentLang][groupName];
+
+    let allCorrect = true;
+    document.querySelectorAll('.custom-select').forEach(select => {
+        const cat = select.dataset.category;
+        const trigger = select.querySelector('.custom-select__trigger');
+        const isCorrect = game2Selections[cat] === correct[cat];
+        if (isCorrect) {
+            trigger.classList.add('correct');
+        } else {
+            trigger.classList.add('wrong');
+            totalErrors++;
+            allCorrect = false;
+        }
+    });
+
+    if (allCorrect) playSound('correcto');
+    else playSound('error');
+
+    updateProgress();
+
+    setTimeout(() => {
+        game2CurrentIndex++;
+        if (game2CurrentIndex < game2GroupOrder.length) {
+            showGame2Question();
+        } else {
+            playSound('completado');
+            setTimeout(() => endGame(), 800);
+        }
+    }, 1200);
+});
+
+/* ====================================================
+   FUNCIONES DE NAVEGACIÓN
+===================================================== */
+function showScreen(screen) {
+    document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+    currentScreen = screen;
+    if (screen === 'start') {
+        document.getElementById('startScreen').classList.add('active');
+        loadHallOfFame();
+    } else if (screen === 'summary') {
+        document.getElementById('summaryScreen').classList.add('active');
+        buildAccordion();
+    } else if (screen === 'game1') {
+        document.getElementById('game1Screen').classList.add('active');
+    } else if (screen === 'game2') {
+        document.getElementById('game2Screen').classList.add('active');
+    } else if (screen === 'final') {
+        document.getElementById('finalScreen').classList.add('active');
+    }
+}
+
+/* ====================================================
+   TIMER
+===================================================== */
+function startTimer() {
+    startTime = Date.now();
+    timerInterval = setInterval(() => {
+        const elapsed = Date.now() - startTime;
+        document.getElementById('timerDisplay').textContent = formatTime(elapsed);
+        document.getElementById('timerDisplay2').textContent = formatTime(elapsed);
+    }, 10);
+}
+
+function formatTime(ms) {
+    const totalCentisecs = Math.floor(ms / 10);
+    const centisecs = totalCentisecs % 100;
+    const totalSecs = Math.floor(totalCentisecs / 100);
+    const sec = totalSecs % 60;
+    const mins = Math.floor(totalSecs / 60);
+    return `${mins.toString().padStart(2,'0')}:${sec.toString().padStart(2,'0')}.${centisecs.toString().padStart(2,'0')}`;
+}
+
+function formatTimeFromSeconds(value) {
+    const secondsNum = parseFloat(value);
+    if (isNaN(secondsNum)) return '00:00.00';
+    return formatTime(secondsNum * 1000);
+}
+
+function getElapsedSeconds() {
+    return (Date.now() - startTime) / 1000;
+}
+
+/* ====================================================
+   PROGRESO
+===================================================== */
+function updateProgress() {
+    const completed = game1TotalFound + (game2CurrentIndex * 4);
+    const percent = Math.min(100, (completed / TOTAL_INTERACTIONS) * 100);
+    document.getElementById('progressFill').style.width = percent + '%';
+    if (document.getElementById('progressFill2')) {
+        document.getElementById('progressFill2').style.width = percent + '%';
+    }
+}
+
+/* ====================================================
+   PANTALLA FINAL
+===================================================== */
+function endGame() {
+    clearInterval(timerInterval);
+    window.speechSynthesis.cancel();
+    const score = calcularPuntuacionFinal();
+    const time = getElapsedSeconds();
+    lastElapsedSeconds = time;
+    showFinalScreen(score, time);
+    showSubmitModal(time, score);
+}
+
+function calcularPuntuacionFinal() {
+    let puntuacion = 100 - (totalErrors * (100 / TOTAL_INTERACTIONS));
+    puntuacion = Math.round(puntuacion);
+    puntuacion = Math.max(0, Math.min(100, puntuacion));
+    return puntuacion;
+}
+
+function showFinalScreen(score, time) {
+    const t = i18n[currentLang];
+    document.getElementById('finalScore').innerHTML = score;
+
+    let msg = t.msg0;
+    if (score === 100) msg = t.msgPerfect;
+    else if (score >= 80) msg = t.msg80;
+    else if (score >= 50) msg = t.msg50;
+
+    document.getElementById('finalMessage').innerHTML = msg;
+    document.getElementById('finalTime').innerHTML = `${t.timeLabel} ${formatTime(time * 1000)}`;
+
+    if (score === 100) {
+        document.getElementById('trophyDiv').classList.remove('hidden');
+        playSound('victoria');
+        createConfetti();
+    } else {
+        playSound('completado');
+    }
+
+    showScreen('final');
+}
+
+function createConfetti() {
+    for (let i = 0; i < 100; i++) {
+        setTimeout(() => {
+            const c = document.createElement('div');
+            c.className = 'confetti';
+            const x = Math.random() * window.innerWidth;
+            const tx = (Math.random() - 0.5) * 200;
+            c.style.left = x + 'px'; c.style.top = '-10px';
+            c.style.backgroundColor = ['#ff595e', '#1982c4', '#6a4c93', '#ffca3a', '#8ac926'][Math.floor(Math.random() * 5)];
+            c.style.setProperty('--tx', tx + 'px');
+            c.style.setProperty('--ty', window.innerHeight + 20 + 'px');
+            document.body.appendChild(c);
+            setTimeout(() => c.remove(), 3000);
+        }, i * 20);
+    }
+}
+
+/* ====================================================
+   HALL OF FAME
+===================================================== */
+function loadHallOfFame() {
+    if (isHofLoading) return;
+    isHofLoading = true;
+    const tableBody = document.getElementById('hofTableBody');
+    tableBody.innerHTML = '<tr><td colspan="4" class="hall-of-fame-loading">Cargando puntuaciones...</td></tr>';
+
+    const url = `${APP_SCRIPT_URL}?action=read&sheet=${SHEET_NAME}`;
+    const controller = new AbortController();
+    const timeoutId = setTimeout(() => controller.abort(), 8000);
+
+    fetch(url, { signal: controller.signal })
+        .then(r => {
+            if (!r.ok) throw new Error(`HTTP ${r.status}`);
+            return r.json();
+        })
+        .then(data => {
+            clearTimeout(timeoutId);
+            isHofLoading = false;
+            if (data.status === 'success' && data.data && data.data.length) {
+                tableBody.innerHTML = data.data.slice(0,10).map((row, i) => `
+                    <tr>
+                        <td>${i+1}</td>
+                        <td>${row.name} ${row.surname}</td>
+                        <td>${row.score}</td>
+                        <td>${formatTimeFromSeconds(row.time)}</td>
+                    </tr>
+                `).join('');
+            } else {
+                tableBody.innerHTML = '<tr><td colspan="4" class="hall-of-fame-loading">¡Sé el primero en guardar tu puntuación!</td></tr>';
+            }
+        })
+        .catch(err => {
+            clearTimeout(timeoutId);
+            isHofLoading = false;
+            console.error('Error cargando Hall of Fame:', err);
+            tableBody.innerHTML = '<tr><td colspan="4" class="hall-of-fame-error">Error al cargar puntuaciones</td></tr>';
+        });
+}
+
+function showSubmitModal(time, score) {
+    const t = i18n[currentLang];
+    document.getElementById('modalTitle').innerHTML = t.modalTitle;
+    document.getElementById('modalTimeLabel').innerHTML = t.modalTimeLabel + ' <span id="modalTime">' + formatTime(time * 1000) + '</span>';
+    document.getElementById('submitScoreBtn').innerHTML = t.modalSave;
+    document.getElementById('discardScoreBtn').innerHTML = t.modalCancel;
+    document.getElementById('playerName').value = '';
+    document.getElementById('playerSurname').value = '';
+    document.getElementById('modalValidationMsg').classList.add('hidden');
+    document.getElementById('submitModal').classList.add('active');
+    document.getElementById('playerName').focus();
+}
+
+let isSubmittingScore = false;
+
+function submitScore() {
+    if (isSubmittingScore) return;
+
+    const name = document.getElementById('playerName').value.trim();
+    const surname = document.getElementById('playerSurname').value.trim();
+    const score = parseInt(document.getElementById('finalScore').innerHTML);
+    const time = Math.round(lastElapsedSeconds * 100) / 100;
+    const validationMsg = document.getElementById('modalValidationMsg');
+
+    if (!name || !surname) {
+        validationMsg.textContent = i18n[currentLang].validationMsg;
+        validationMsg.classList.remove('hidden');
+        validationMsg.classList.remove('shake');
+        void validationMsg.offsetWidth;
+        validationMsg.classList.add('shake');
+        playSound('error');
+        return;
+    }
+    validationMsg.classList.add('hidden');
+
+    isSubmittingScore = true;
+    const btn = document.getElementById('submitScoreBtn');
+    btn.innerHTML = 'Enviando...';
+    const payload = { sheet: SHEET_NAME, action: 'write', data: { score, time, name, surname } };
+
+    fetch(APP_SCRIPT_URL, {
+        method: 'POST',
+        mode: 'no-cors',
+        headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+        body: JSON.stringify(payload)
+    }).then(() => {
+        setTimeout(() => {
+            document.getElementById('submitModal').classList.remove('active');
+            btn.innerHTML = i18n[currentLang].modalSave;
+            isSubmittingScore = false;
+            loadHallOfFame();
+        }, 1500);
+    }).catch(e => {
+        console.log('Error:', e);
+        btn.innerHTML = i18n[currentLang].modalSave;
+        isSubmittingScore = false;
+    });
+}
+
+document.getElementById('submitScoreBtn').addEventListener('click', submitScore);
+document.getElementById('discardScoreBtn').addEventListener('click', () => {
+    playSound('tap');
+    document.getElementById('submitModal').classList.remove('active');
+});
+
+document.getElementById('playerSurname').addEventListener('keypress', (e) => {
+    if (e.key === 'Enter') document.getElementById('submitScoreBtn').click();
+});
+
+document.getElementById('backBtn').addEventListener('click', () => {
+    playSound('tap');
+    showScreen('start');
+});
+
+/* ====================================================
+   UTILIDADES
+===================================================== */
+function shuffleArray(arr) {
+    const result = [...arr];
+    for (let i = result.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [result[i], result[j]] = [result[j], result[i]];
+    }
+    return result;
+}
+
+/* ====================================================
+   INICIALIZACIÓN
+===================================================== */
+window.addEventListener('load', () => {
+    document.documentElement.lang = 'en';
+    applyLanguage('en');
+    loadHallOfFame();
+});
+</script>
+</body>
+</html>
